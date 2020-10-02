@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-programming-flag.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-programming-flag.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yangchen.pro","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="这里采用最简单的线性模型：$y_{data}&#x3D;b+w*x_{data}$，我们要使用梯度下降法把b和w找出来。当然这个问题有closed-form solution，这个b和w有更简单的方法可以找出来；那我们假装不知道这件事，我们练习用梯度下降法把b和w找出来">
+<meta property="og:type" content="article">
+<meta property="og:title" content="5-回归Demo-Adagrad">
+<meta property="og:url" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/5-%E5%9B%9E%E5%BD%92Demo-Adagrad/index.html">
+<meta property="og:site_name" content="CBlog">
+<meta property="og:description" content="这里采用最简单的线性模型：$y_{data}&#x3D;b+w*x_{data}$，我们要使用梯度下降法把b和w找出来。当然这个问题有closed-form solution，这个b和w有更简单的方法可以找出来；那我们假装不知道这件事，我们练习用梯度下降法把b和w找出来">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/5-%E5%9B%9E%E5%BD%92Demo-Adagrad/20200123150335527.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/5-%E5%9B%9E%E5%BD%92Demo-Adagrad/20200123150716524.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/5-%E5%9B%9E%E5%BD%92Demo-Adagrad/2020012315075713.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/5-%E5%9B%9E%E5%BD%92Demo-Adagrad/20200123150828598.png">
+<meta property="article:published_time" content="2020-10-02T08:23:16.000Z">
+<meta property="article:modified_time" content="2020-10-02T08:30:13.868Z">
+<meta property="article:author" content="YANG CHEN">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/5-%E5%9B%9E%E5%BD%92Demo-Adagrad/20200123150335527.png">
+
+<link rel="canonical" href="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/5-%E5%9B%9E%E5%BD%92Demo-Adagrad/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>5-回归Demo-Adagrad | CBlog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="CBlog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CBlog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录科研日常</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">7</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/ycv587" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/5-%E5%9B%9E%E5%BD%92Demo-Adagrad/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="YANG CHEN">
+      <meta itemprop="description" content="is me">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CBlog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          5-回归Demo-Adagrad
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-10-02 16:23:16 / 修改时间：16:30:13" itemprop="dateCreated datePublished" datetime="2020-10-02T16:23:16+08:00">2020-10-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">“有手就行”系列</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>这里采用最简单的线性模型：$y_{data}=b+w*x_{data}$，我们要使用梯度下降法把b和w找出来。当然这个问题有closed-form solution，这个b和w有更简单的方法可以找出来；那我们假装不知道这件事，我们练习用梯度下降法把b和w找出来</p>
+<a id="more"></a>
+<h4 id="数据准备："><a href="#数据准备：" class="headerlink" title="数据准备："></a>数据准备：</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设x_data和y_data都有10笔，分别代表宝可梦进化前后的cp值</span></span><br><span class="line">x_data=[<span class="number">338.</span>,<span class="number">333.</span>,<span class="number">328.</span>,<span class="number">207.</span>,<span class="number">226.</span>,<span class="number">25.</span>,<span class="number">179.</span>,<span class="number">60.</span>,<span class="number">208.</span>,<span class="number">606.</span>]</span><br><span class="line">y_data=[<span class="number">640.</span>,<span class="number">633.</span>,<span class="number">619.</span>,<span class="number">393.</span>,<span class="number">428.</span>,<span class="number">27.</span>,<span class="number">193.</span>,<span class="number">66.</span>,<span class="number">226.</span>,<span class="number">1591.</span>]</span><br><span class="line"><span class="comment"># 这里采用最简单的linear model：y_data=b+w*x_data</span></span><br><span class="line"><span class="comment"># 我们要用gradient descent把b和w找出来</span></span><br></pre></td></tr></table></figure>
+<h4 id="计算梯度微分的函数getGrad"><a href="#计算梯度微分的函数getGrad" class="headerlink" title="计算梯度微分的函数getGrad()"></a>计算梯度微分的函数getGrad()</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 计算梯度微分的函数getGrad()</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getGrad</span>(<span class="params">b,w</span>):</span></span><br><span class="line">    <span class="comment"># initial b_grad and w_grad</span></span><br><span class="line">    b_grad=<span class="number">0.0</span></span><br><span class="line">    w_grad=<span class="number">0.0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>):</span><br><span class="line">        b_grad+=(<span class="number">-2.0</span>)*(y_data[i]-(b+w*x_data[i]))</span><br><span class="line">        w_grad+=(<span class="number">-2.0</span>*x_data[i])*(y_data[i]-(b+w*x_data[i]))</span><br><span class="line">    <span class="keyword">return</span> (b_grad,w_grad)</span><br></pre></td></tr></table></figure>
+<h4 id="引入需要的库"><a href="#引入需要的库" class="headerlink" title="引入需要的库"></a>引入需要的库</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">matplotlib.use(<span class="string">&#x27;Agg&#x27;</span>)</span><br><span class="line">%matplotlib inline </span><br><span class="line"><span class="keyword">import</span> random <span class="keyword">as</span> random</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> csv</span><br></pre></td></tr></table></figure>
+<h4 id="准备好b、w、loss的图像数据"><a href="#准备好b、w、loss的图像数据" class="headerlink" title="准备好b、w、loss的图像数据"></a>准备好b、w、loss的图像数据</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成一组b和w的数据图，方便给gradient descent的过程做标记</span></span><br><span class="line">x = np.arange(<span class="number">-200</span>,<span class="number">-100</span>,<span class="number">1</span>) <span class="comment"># bias</span></span><br><span class="line">y = np.arange(<span class="number">-5</span>,<span class="number">5</span>,<span class="number">0.1</span>) <span class="comment"># weight</span></span><br><span class="line">Z = np.zeros((len(x),len(y))) <span class="comment"># color</span></span><br><span class="line">X,Y = np.meshgrid(x,y)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(x)):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(len(y)):</span><br><span class="line">        b = x[i]</span><br><span class="line">        w = y[j]</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Z[j][i]存储的是loss</span></span><br><span class="line">        Z[j][i] = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> n <span class="keyword">in</span> range(len(x_data)):</span><br><span class="line">            Z[j][i] = Z[j][i] + (y_data[n] - (b + w * x_data[n]))**<span class="number">2</span></span><br><span class="line">        Z[j][i] = Z[j][i]/len(x_data)</span><br></pre></td></tr></table></figure>
+<h4 id="规定迭代次数和learning-rate，进行第一次尝试"><a href="#规定迭代次数和learning-rate，进行第一次尝试" class="headerlink" title="规定迭代次数和learning rate，进行第一次尝试"></a>规定迭代次数和learning rate，进行第一次尝试</h4><p>距离最优解还有一段距离</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># y_data = b + w * x_data</span></span><br><span class="line">b = <span class="number">-120</span> <span class="comment"># initial b</span></span><br><span class="line">w = <span class="number">-4</span> <span class="comment"># initial w</span></span><br><span class="line">lr = <span class="number">0.0000001</span> <span class="comment"># learning rate</span></span><br><span class="line">iteration = <span class="number">100000</span> <span class="comment"># 这里直接规定了迭代次数，而不是一直运行到b_grad和w_grad都为0(事实证明这样做不太可行)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># store initial values for plotting，我们想要最终把数据描绘在图上，因此存储过程数据</span></span><br><span class="line">b_history = [b]</span><br><span class="line">w_history = [w]</span><br><span class="line"></span><br><span class="line"><span class="comment"># iterations</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(iteration):</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># get new b_grad and w_grad</span></span><br><span class="line">    b_grad,w_grad=getGrad(b,w)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># update b and w</span></span><br><span class="line">    b -= lr * b_grad</span><br><span class="line">    w -= lr * w_grad</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#store parameters for plotting</span></span><br><span class="line">    b_history.append(b)</span><br><span class="line">    w_history.append(w)</span><br><span class="line"></span><br><span class="line"><span class="comment"># plot the figure</span></span><br><span class="line">plt.contourf(x,y,Z,<span class="number">50</span>,alpha=<span class="number">0.5</span>,cmap=plt.get_cmap(<span class="string">&#x27;jet&#x27;</span>))</span><br><span class="line">plt.plot([<span class="number">-188.4</span>],[<span class="number">2.67</span>],<span class="string">&#x27;x&#x27;</span>,ms=<span class="number">12</span>,markeredgewidth=<span class="number">3</span>,color=<span class="string">&#x27;orange&#x27;</span>)</span><br><span class="line">plt.plot(b_history,w_history,<span class="string">&#x27;o-&#x27;</span>,ms=<span class="number">3</span>,lw=<span class="number">1.5</span>,color=<span class="string">&#x27;black&#x27;</span>)</span><br><span class="line">plt.xlim(<span class="number">-200</span>,<span class="number">-100</span>)</span><br><span class="line">plt.ylim(<span class="number">-5</span>,<span class="number">5</span>)</span><br><span class="line">plt.xlabel(<span class="string">r&#x27;$b$&#x27;</span>,fontsize=<span class="number">16</span>)</span><br><span class="line">plt.ylabel(<span class="string">r&#x27;$w$&#x27;</span>,fontsize=<span class="number">16</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/5-%E5%9B%9E%E5%BD%92Demo-Adagrad/20200123150335527.png" width="60%;"></center>
+
+<h4 id="把learning-rate增大10倍尝试"><a href="#把learning-rate增大10倍尝试" class="headerlink" title="把learning rate增大10倍尝试"></a>把learning rate增大10倍尝试</h4><p>发现经过100000次的update以后，我们的参数相比之前与最终目标更接近了，但是这里有一个剧烈的震荡现象发生</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 上图中，gradient descent最终停止的地方里最优解还差很远，</span></span><br><span class="line"><span class="comment"># 由于我们是规定了iteration次数的，因此原因应该是learning rate不够大，这里把它放大10倍</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># y_data = b + w * x_data</span></span><br><span class="line">b = <span class="number">-120</span> <span class="comment"># initial b</span></span><br><span class="line">w = <span class="number">-4</span> <span class="comment"># initial w</span></span><br><span class="line">lr = <span class="number">0.000001</span> <span class="comment"># learning rate 放大10倍</span></span><br><span class="line">iteration = <span class="number">100000</span> <span class="comment"># 这里直接规定了迭代次数，而不是一直运行到b_grad和w_grad都为0(事实证明这样做不太可行)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># store initial values for plotting，我们想要最终把数据描绘在图上，因此存储过程数据</span></span><br><span class="line">b_history = [b]</span><br><span class="line">w_history = [w]</span><br><span class="line"></span><br><span class="line"><span class="comment"># iterations</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(iteration):</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># get new b_grad and w_grad</span></span><br><span class="line">    b_grad,w_grad=getGrad(b,w)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># update b and w</span></span><br><span class="line">    b -= lr * b_grad</span><br><span class="line">    w -= lr * w_grad</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#store parameters for plotting</span></span><br><span class="line">    b_history.append(b)</span><br><span class="line">    w_history.append(w)</span><br><span class="line"></span><br><span class="line"><span class="comment"># plot the figure</span></span><br><span class="line">plt.contourf(x,y,Z,<span class="number">50</span>,alpha=<span class="number">0.5</span>,cmap=plt.get_cmap(<span class="string">&#x27;jet&#x27;</span>))</span><br><span class="line">plt.plot([<span class="number">-188.4</span>],[<span class="number">2.67</span>],<span class="string">&#x27;x&#x27;</span>,ms=<span class="number">12</span>,markeredgewidth=<span class="number">3</span>,color=<span class="string">&#x27;orange&#x27;</span>)</span><br><span class="line">plt.plot(b_history,w_history,<span class="string">&#x27;o-&#x27;</span>,ms=<span class="number">3</span>,lw=<span class="number">1.5</span>,color=<span class="string">&#x27;black&#x27;</span>)</span><br><span class="line">plt.xlim(<span class="number">-200</span>,<span class="number">-100</span>)</span><br><span class="line">plt.ylim(<span class="number">-5</span>,<span class="number">5</span>)</span><br><span class="line">plt.xlabel(<span class="string">r&#x27;$b$&#x27;</span>,fontsize=<span class="number">16</span>)</span><br><span class="line">plt.ylabel(<span class="string">r&#x27;$w$&#x27;</span>,fontsize=<span class="number">16</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/5-%E5%9B%9E%E5%BD%92Demo-Adagrad/20200123150716524.png" width="60%;"></center>
+
+<h4 id="把learning-rate再增大10倍"><a href="#把learning-rate再增大10倍" class="headerlink" title="把learning rate再增大10倍"></a>把learning rate再增大10倍</h4><p>发现此时learning rate太大了，参数一update，就远远超出图中标注的范围了</p>
+<p>所以我们会发现一个很严重的问题，如果learning rate变小一点，他距离最佳解还是会具有一段距离；但是如果learning rate放大，它就会直接超出范围了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 上图中，gradient descent最终停止的地方里最优解还是有一点远，</span></span><br><span class="line"><span class="comment"># 由于我们是规定了iteration次数的，因此原因应该是learning rate还是不够大，这里再把它放大10倍</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># y_data = b + w * x_data</span></span><br><span class="line">b = <span class="number">-120</span> <span class="comment"># initial b</span></span><br><span class="line">w = <span class="number">-4</span> <span class="comment"># initial w</span></span><br><span class="line">lr = <span class="number">0.00001</span> <span class="comment"># learning rate 放大10倍</span></span><br><span class="line">iteration = <span class="number">100000</span> <span class="comment"># 这里直接规定了迭代次数，而不是一直运行到b_grad和w_grad都为0(事实证明这样做不太可行)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># store initial values for plotting，我们想要最终把数据描绘在图上，因此存储过程数据</span></span><br><span class="line">b_history = [b]</span><br><span class="line">w_history = [w]</span><br><span class="line"></span><br><span class="line"><span class="comment"># iterations</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(iteration):</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># get new b_grad and w_grad</span></span><br><span class="line">    b_grad,w_grad=getGrad(b,w)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># update b and w</span></span><br><span class="line">    b -= lr * b_grad</span><br><span class="line">    w -= lr * w_grad</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#store parameters for plotting</span></span><br><span class="line">    b_history.append(b)</span><br><span class="line">    w_history.append(w)</span><br><span class="line"></span><br><span class="line"><span class="comment"># plot the figure</span></span><br><span class="line">plt.contourf(x,y,Z,<span class="number">50</span>,alpha=<span class="number">0.5</span>,cmap=plt.get_cmap(<span class="string">&#x27;jet&#x27;</span>))</span><br><span class="line">plt.plot([<span class="number">-188.4</span>],[<span class="number">2.67</span>],<span class="string">&#x27;x&#x27;</span>,ms=<span class="number">12</span>,markeredgewidth=<span class="number">3</span>,color=<span class="string">&#x27;orange&#x27;</span>)</span><br><span class="line">plt.plot(b_history,w_history,<span class="string">&#x27;o-&#x27;</span>,ms=<span class="number">3</span>,lw=<span class="number">1.5</span>,color=<span class="string">&#x27;black&#x27;</span>)</span><br><span class="line">plt.xlim(<span class="number">-200</span>,<span class="number">-100</span>)</span><br><span class="line">plt.ylim(<span class="number">-5</span>,<span class="number">5</span>)</span><br><span class="line">plt.xlabel(<span class="string">r&#x27;$b$&#x27;</span>,fontsize=<span class="number">16</span>)</span><br><span class="line">plt.ylabel(<span class="string">r&#x27;$w$&#x27;</span>,fontsize=<span class="number">16</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/5-%E5%9B%9E%E5%BD%92Demo-Adagrad/2020012315075713.png" width="60%;"></center>
+
+<p>这个问题明明很简单，可是只有两个参数b和w，gradient descent搞半天都搞不定，那以后做neural network有数百万个参数的时候，要怎么办呢</p>
+<p>这个就是<strong>一室不治何以国家为</strong>的概念</p>
+<h4 id="解决方案：Adagrad"><a href="#解决方案：Adagrad" class="headerlink" title="解决方案：Adagrad"></a>解决方案：Adagrad</h4><p>我们给b和w订制化的learning rate，让它们两个的learning rate不一样</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这里给b和w不同的learning rate </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># y_data = b + w * x_data</span></span><br><span class="line">b = <span class="number">-120</span> <span class="comment"># initial b</span></span><br><span class="line">w = <span class="number">-4</span> <span class="comment"># initial w</span></span><br><span class="line">lr = <span class="number">1</span> <span class="comment"># learning rate 放大10倍</span></span><br><span class="line">iteration = <span class="number">100000</span> <span class="comment"># 这里直接规定了迭代次数，而不是一直运行到b_grad和w_grad都为0(事实证明这样做不太可行)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># store initial values for plotting，我们想要最终把数据描绘在图上，因此存储过程数据</span></span><br><span class="line">b_history = [b]</span><br><span class="line">w_history = [w]</span><br><span class="line"></span><br><span class="line">lr_b = <span class="number">0</span></span><br><span class="line">lr_w = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># iterations</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(iteration):</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># get new b_grad and w_grad</span></span><br><span class="line">    b_grad,w_grad=getGrad(b,w)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># get the different learning rate for b and w</span></span><br><span class="line">    lr_b = lr_b + b_grad ** <span class="number">2</span></span><br><span class="line">    lr_w = lr_w + w_grad ** <span class="number">2</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 这一招叫做adagrad，之后会详加解释</span></span><br><span class="line">    <span class="comment"># update b and w with new learning rate</span></span><br><span class="line">    b -= lr / np.sqrt(lr_b) * b_grad</span><br><span class="line">    w -= lr / np.sqrt(lr_w) * w_grad</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#store parameters for plotting</span></span><br><span class="line">    b_history.append(b)</span><br><span class="line">    w_history.append(w)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># output the b w b_grad w_grad</span></span><br><span class="line">    <span class="comment"># print(&quot;b: &quot;+str(b)+&quot;\t\t\t w: &quot;+str(w)+&quot;\n&quot;+&quot;b_grad: &quot;+str(b_grad)+&quot;\t\t w_grad: &quot;+str(w_grad)+&quot;\n&quot;)</span></span><br><span class="line">    </span><br><span class="line"><span class="comment"># output the final function and its error</span></span><br><span class="line">print(<span class="string">&quot;the function will be y_data=&quot;</span>+str(b)+<span class="string">&quot;+&quot;</span>+str(w)+<span class="string">&quot;*x_data&quot;</span>)</span><br><span class="line">error=<span class="number">0.0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>):</span><br><span class="line">    print(<span class="string">&quot;error &quot;</span>+str(i)+<span class="string">&quot; is: &quot;</span>+str(np.abs(y_data[i]-(b+w*x_data[i])))+<span class="string">&quot; &quot;</span>)</span><br><span class="line">    error+=np.abs(y_data[i]-(b+w*x_data[i]))</span><br><span class="line">average_error=error/<span class="number">10</span></span><br><span class="line">print(<span class="string">&quot;the average error is &quot;</span>+str(average_error))</span><br><span class="line"></span><br><span class="line"><span class="comment"># plot the figure</span></span><br><span class="line">plt.contourf(x,y,Z,<span class="number">50</span>,alpha=<span class="number">0.5</span>,cmap=plt.get_cmap(<span class="string">&#x27;jet&#x27;</span>))</span><br><span class="line">plt.plot([<span class="number">-188.4</span>],[<span class="number">2.67</span>],<span class="string">&#x27;x&#x27;</span>,ms=<span class="number">12</span>,markeredgewidth=<span class="number">3</span>,color=<span class="string">&#x27;orange&#x27;</span>)</span><br><span class="line">plt.plot(b_history,w_history,<span class="string">&#x27;o-&#x27;</span>,ms=<span class="number">3</span>,lw=<span class="number">1.5</span>,color=<span class="string">&#x27;black&#x27;</span>)</span><br><span class="line">plt.xlim(<span class="number">-200</span>,<span class="number">-100</span>)</span><br><span class="line">plt.ylim(<span class="number">-5</span>,<span class="number">5</span>)</span><br><span class="line">plt.xlabel(<span class="string">r&#x27;$b$&#x27;</span>,fontsize=<span class="number">16</span>)</span><br><span class="line">plt.ylabel(<span class="string">r&#x27;$w$&#x27;</span>,fontsize=<span class="number">16</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<pre><code>the function will be y_data=-188.3668387495323+2.6692640713379903*x_data
+error 0 is: 73.84441736270833 
+error 1 is: 67.4980970060185 
+error 2 is: 68.15177664932844 
+error 3 is: 28.8291759825683 
+error 4 is: 13.113158627146447 
+error 5 is: 148.63523696608252 
+error 6 is: 96.43143001996799 
+error 7 is: 94.21099446925288 
+error 8 is: 140.84008808876973 
+error 9 is: 161.7928115187101 
+the average error is 89.33471866905532
+</code></pre><center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/5-%E5%9B%9E%E5%BD%92Demo-Adagrad/20200123150828598.png" width="60%;"></center>
+
+<p><strong>有了新的learning rate以后，从初始值到终点，我们在100000次iteration之内就可以顺利地完成了</strong></p>
+
+    </div>
+
+    
+    
+    
+
+    <div>
+      
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      
+    </div>
+        <div class="reward-container">
+  <div>您的支持是对我最大的鼓励！</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="YANG CHEN 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="YANG CHEN 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>YANG CHEN
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/5-%E5%9B%9E%E5%BD%92Demo-Adagrad/" title="5-回归Demo-Adagrad">https://yangchen.pro/机器学习/“有手就行”系列/5-回归Demo-Adagrad/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/4-%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%EF%BC%88Gradient-Descent%EF%BC%89/" rel="prev" title="4-梯度下降（Gradient Descent）">
+      <i class="fa fa-chevron-left"></i> 4-梯度下降（Gradient Descent）
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87%EF%BC%9A"><span class="nav-text">数据准备：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%A2%AF%E5%BA%A6%E5%BE%AE%E5%88%86%E7%9A%84%E5%87%BD%E6%95%B0getGrad"><span class="nav-text">计算梯度微分的函数getGrad()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%85%A5%E9%9C%80%E8%A6%81%E7%9A%84%E5%BA%93"><span class="nav-text">引入需要的库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%A5%BDb%E3%80%81w%E3%80%81loss%E7%9A%84%E5%9B%BE%E5%83%8F%E6%95%B0%E6%8D%AE"><span class="nav-text">准备好b、w、loss的图像数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%84%E5%AE%9A%E8%BF%AD%E4%BB%A3%E6%AC%A1%E6%95%B0%E5%92%8Clearning-rate%EF%BC%8C%E8%BF%9B%E8%A1%8C%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%B0%9D%E8%AF%95"><span class="nav-text">规定迭代次数和learning rate，进行第一次尝试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%8Alearning-rate%E5%A2%9E%E5%A4%A710%E5%80%8D%E5%B0%9D%E8%AF%95"><span class="nav-text">把learning rate增大10倍尝试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%8Alearning-rate%E5%86%8D%E5%A2%9E%E5%A4%A710%E5%80%8D"><span class="nav-text">把learning rate再增大10倍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9AAdagrad"><span class="nav-text">解决方案：Adagrad</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YANG CHEN"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">YANG CHEN</p>
+  <div class="site-description" itemprop="description">is me</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ycv587" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ycv587" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:not1st@163.com" title="E-Mail → mailto:not1st@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">YANG CHEN</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">51k字</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">47 分钟</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    /*
+    window.MathJax = {
+      loader: {
+          load: ['[tex]/mhchem'],
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+          packages: {'[+]': ['mhchem']},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    */
+    window.MathJax = {
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
