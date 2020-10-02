@@ -17,37 +17,37 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yangchen.pro","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"yangchen.pro","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="机器学习其实只有三个步骤，这三个步骤简化了整个process。可以类比为把大象放进冰箱。我们把大象塞进冰箱需要三个步骤：把门打开；象塞进去；然后把门关起来。机器学习的三个步骤就好比把大象放进冰箱，也只需要三个步骤：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="1-什么是机器学习">
-<meta property="og:url" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:url" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/index.html">
 <meta property="og:site_name" content="CBlog">
 <meta property="og:description" content="机器学习其实只有三个步骤，这三个步骤简化了整个process。可以类比为把大象放进冰箱。我们把大象塞进冰箱需要三个步骤：把门打开；象塞进去；然后把门关起来。机器学习的三个步骤就好比把大象放进冰箱，也只需要三个步骤：">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-20.png">
-<meta property="og:image" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-7.png">
-<meta property="og:image" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-12.png">
-<meta property="og:image" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-13.png">
-<meta property="og:image" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-16.png">
-<meta property="og:image" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-19.png">
-<meta property="og:image" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-20.png">
-<meta property="og:image" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/learning_map.png">
-<meta property="og:image" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/semi-supervised-Learning.png">
-<meta property="og:image" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/transfer-Learning.png">
-<meta property="og:image" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/unsupervised-Learning.png">
-<meta property="og:image" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/structured-Learning.png">
-<meta property="og:image" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/reinforcement-Learning.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-20.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-7.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-12.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-13.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-16.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-19.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-20.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/learning_map.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/semi-supervised-Learning.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/transfer-Learning.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/unsupervised-Learning.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/structured-Learning.png">
+<meta property="og:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/reinforcement-Learning.png">
 <meta property="article:published_time" content="2020-09-19T03:36:30.000Z">
 <meta property="article:modified_time" content="2020-09-23T05:04:02.727Z">
 <meta property="article:author" content="YANG CHEN">
 <meta property="article:tag" content="机器学习">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-20.png">
+<meta name="twitter:image" content="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-20.png">
 
-<link rel="canonical" href="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">
+<link rel="canonical" href="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">
 
 
 <script id="page-configurations">
@@ -152,7 +152,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">4</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">6</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -213,7 +213,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">
+    <link itemprop="mainEntityOfPage" href="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -294,7 +294,7 @@
 
       
         <p>机器学习其实只有三个步骤，这三个步骤简化了整个process。可以类比为把大象放进冰箱。我们把大象塞进冰箱需要三个步骤：把门打开；象塞进去；然后把门关起来。机器学习的三个步骤就好比把大象放进冰箱，也只需要三个步骤：</p>
-<center><img src="/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-20.png" alt="learning map" width="60%;"></center>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-20.png" alt="learning map" width="60%;"></center>
 
 <a id="more"></a>
 <h1 id="1-机器学习简介"><a href="#1-机器学习简介" class="headerlink" title="1. 机器学习简介"></a>1. 机器学习简介</h1><p>人工智能是什么呢？人工智能其实一点都不是新的词汇，人工智能（Artificial Intelligence）这个词汇，在19世纪50年代就有了。那这个词意味着什么呢？这个词意味着一个人类长远以来的目标，希望机器可以跟人一样的聪明。在科幻小说里面，我们看要很多这样的幻想和期待。但很长段时间里面，人们并不知道怎么做到人工智能这件事情，直到后来，大概19世纪80年代以后，有了机器学习的方法。那么机器学习顾名思义，从名字就可以被猜出，就是让机器具有学习的能力。所以机器学习跟人工智能之间有什么关系呢？</p>
@@ -307,7 +307,7 @@
 <p>使用 hand-crafted rules 有什么样的坏处呢，它的坏处就是：使用 hand-crafted rules 你没办法考虑到所有的可能性，它非常的僵化，而用 hand-crafted rules 创造出来的 machine，它永远没有办法超过它的创造者——人类。人类想不到东西，就没办法写规则，没有写规则，机器就不知道要怎么办。所以如果一个机器，它只能够按照人类所设定好的 hand-crafted rules，它整个行为都是被规定好的，没有办法 freestyle。如果是这样的话，它就没有办法超越创造他的人类。</p>
 <p>你可能会说，但是你好像看到很多 chat-bot 看起来非常的聪明。如果你是有一个是一个非常大的企业，他给以派给成千上万的工程师，用血汗的方式来建出数以万计的规则，然后让他的机器看起来好像很聪明。但是对于中小企业来说，这样建规则的方式反而是不利的。所以我认为机器学习发展，对比较小规模企业反而是更有利的。因为接下来，不需要非常大量的人来帮你想各式各样的规则，只要手上有 data，你可以让机器来帮你做这件事情。当然怎么收集 data 又是另外一个问题，这不是我们今天要讨论的主题。</p>
 <p>AI 这个词现在非常非常非常非常的热门，所以会有各式各样、奇奇怪怪的东西，我觉得现在非常经常碰到的一个问题，也许可用以下这个漫画来说明，这是四格漫画，而这个漫画并不是随随便便的一个四格漫画，这个漫画是 facebook 上的漫画。</p>
-<center><img src="/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-7.png" alt="learning map" width="60%;"></center>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-7.png" alt="learning map" width="60%;"></center>
 
 <p>这个漫画想要说的是：现在你一定常常新闻或者是商场上看到这个讯息，有一个seller说看看我们最新的人工智慧机器人，它就是非常的人工智慧。这个系统搭配一个能言善道seller，加上一个非常非常潮的前端和外壳，里面是什么没有人知道。</p>
 <p>外面的观众就问说：他是用什么neural方法做的，反正就是最潮的AI的技术。但是你把他剖来看一看，里面通通都是if掉出来。</p>
@@ -318,22 +318,22 @@
 <p>在语音辨识这个问题里面，我们要找一个 function，它的输入是声音讯号，他的输出是语音辨识的文字。这个 function 非常非常的复杂，有人会想说我来用一些写规则的方式，读很多语言学文献，然后写一堆规则，然后做语音辨识。这件事情，60年代就有人做，但到现在都还没有做出来。语音辨识太过复杂，这个 function 太过的复杂，不是人类所可以写出来，这是可以想象的。所以我们需要凭借的机器的力量，帮我们把这个 function 找出来。</p>
 <p>假设你要做影像辨识，那就是找一个 function，输入一张图片，然后输出图片里面有什么样的东西。 或者是大家都一直在说的 Alpha GO，如果你要做一个可以下围棋 machine 时，其实你需要的也就是找一个 function。这个 function 的输入是围棋上19 * 19的棋盘。告诉机器在19 * 19的棋盘上，哪些位置有黑子，哪些位置有白子。然后机器就会告诉你，接下来下一步应该落子在哪。或者是你要做一个聊天机器人，那你需要的是一个 function，这个 function 的输入就是使用者的 input，它的输出就是机器的回应。</p>
 <p>以下我先很简短的跟大家说明怎么样找出这个 function，找出 function 的 framework 是什么呢？我们以影像辨识为例，我们找个 function 输入一张图片，它告诉我们这个图片里面有什么样的东西。</p>
-<center><img src="/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-12.png" alt="learning map" width="60%;"></center>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-12.png" alt="learning map" width="60%;"></center>
 
 <p>在做这件事时，你的起手事是你要先准备一个 function set，这个 function 里面有成千上万的 function。举例来说，这个 function 里面有一个f1，你给它看一只猫，它就告诉你输出猫，看一只狗就输出狗。有一个function f2它很怪，你给它看猫，它说是猴子；你给他看狗，它说是蛇。你要准备一个 function set，这个 function set 里面有成千上万的 function。这件事情讲起来可能有点抽象，你可能会怀疑说怎么会有成千上万的 function，我怎么把成千上万的function收集起来，这个内容我们之后会再讲。总之，我们先假设你手上有一个function set，这个function set就叫做model(模型)。</p>
-<center><img src="/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-13.png" alt="learning map" width="60%;"></center>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-13.png" alt="learning map" width="60%;"></center>
 
 <p>有了这个 function set，接下来机器要做的事情是：它有一些训练的资料，这些训练资料告诉机器说一个好的 function，它的输入输出应该长什么样子，有什么样关系。你告诉机器说，现在在这个影像辨识的问题里面，如果看到这个猴子就输出猴子，看到这个猫的图就输出猫，看到这个狗的图，就要输出狗，这样才是对的。有了这些训练资料，你拿出一个 function，机器就可以判断说，这个 function 是好的还是不好的。</p>
-<center><img src="/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-16.png" alt="learning map" width="60%;"></center>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-16.png" alt="learning map" width="60%;"></center>
 
 <p>机器可以根据训练资料判断一个 function 是好的，还是不好的。举例来说：在这个例子里面显然 $f_1$，他比较符合 training data 的叙述，比较符合我们的知识。所以f1看起来是比较好的。$f_2$ 看起来是一个荒谬的 function。我们今天讲的这个 task 叫做 supervised learning 。</p>
 <p>如果你告诉机器 input 和 output 这就叫做 supervised learning，之后我们也会讲到其他不同的学习场景。现在机器有办法决定一个 function 的好坏。但光能够决定一个 function 的好坏是不够的，因为在你的 function set 里面，他有成千上万的 function，它有会无穷无尽的 function，所以我们需要一个有效率的演算法，有效率的演算法可以从 function set 里面挑出最好的 function。一个一个衡量 function 的好坏太花时间，实际上做不到。所以我们需要有一个好的演算法，从 function set 里面挑出一个最好的的 function，这个最好的 function 将它记为 $f^*$。</p>
 <p>找到 $f^*$ 之后，我们希望用它应用到一些场景中，比如：影像辨识，输入一张在机器没有看过的猫，然后希望输出也是猫。你可能会说：机器在学习时没有看到这只猫，那咋样知道在测试时找到的最好 function 可以正确辨识这只猫呢？这就是机器学习里面非常重要的问题：机器有举一反三的能力，这个内容后面再讲。</p>
-<center><img src="/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-19.png" alt="learning map" width="60%;"></center>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-19.png" alt="learning map" width="60%;"></center>
 
 <p>如上图，左边这个部分叫 training，就是学习的过程；右边这个部分叫做 testing，学好以后你就可以拿它做应用。所以machine learning framework 整个过程分成了三个步骤。第一个步骤就是找一个 function，第二个步骤让 machine 可以衡量一个 function 是好还是不好，第三个步骤是让 machine 有一个自动的方法，有一个好演算法可以挑出最好的 function。</p>
 <p>机器学习其实只有三个步骤，这三个步骤简化了整个process。可以类比为把大象放进冰箱。我们把大象塞进冰箱需要三个步骤：把门打开；象塞进去；然后把门关起来。机器学习的三个步骤就好比把大象放进冰箱，也只需要三个步骤：</p>
-<center><img src="/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-20.png" alt="learning map" width="60%;"></center>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-20.png" alt="learning map" width="60%;"></center>
 
 
 
@@ -341,7 +341,7 @@
 <p>蓝色方块指的是 scenario，即学习的情境。通常学习的情境是我们没有办法控制的，比如做 reinforcement Learning 是因为我们没有 data，没有办法来做supervised Learning 的情况下才去做的。如果有 data，supervised Learning 当然比 reinforcement Learning 要好；因此手上有什么样的 data，就决定你使用什么样的 scenario</p>
 <p>红色方块指的是 task，即要解决的问题。你要解的问题，随着你要找的 function 的 output 的不同，有输出 scalar 的 regression、有输出 options 的  classification、有输出 structured object 的 structured Learning…</p>
 <p>绿色的方块指的是 model，即用来解决问题的模型（function set）。在这些 task 里面有不同的 model，也就是说，同样的 task，我们可以用不同的方法来解它，比如 linear model、Non-linear model(deep Learning、SVM、decision tree、K-NN…)</p>
-<center><img src="/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/learning_map.png" alt="learning map" width="60%;"></center>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/learning_map.png" alt="learning map" width="60%;"></center>
 
 
 
@@ -375,25 +375,25 @@
 <h2 id="2-2-半监督学习（Semi-supervised-Learning）"><a href="#2-2-半监督学习（Semi-supervised-Learning）" class="headerlink" title="2.2 半监督学习（Semi-supervised Learning）"></a>2.2 半监督学习（Semi-supervised Learning）</h2><p>举例：如果想要做一个区分猫和狗的function</p>
 <p>手头上有少量的labeled data，它们标注了图片上哪只是猫哪只是狗；同时又有大量的unlabeled data，它们仅仅只有猫和狗的图片，但没有标注去告诉机器哪只是猫哪只是狗</p>
 <p>在Semi-supervised Learning的技术里面，这些没有labeled的data，对机器学习也是有帮助的</p>
-<center><img src="/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/semi-supervised-Learning.png" alt="semi-supervised" width="60%;"></center>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/semi-supervised-Learning.png" alt="semi-supervised" width="60%;"></center>
 
 <h2 id="2-3-迁移学习（Transfer-Learning）"><a href="#2-3-迁移学习（Transfer-Learning）" class="headerlink" title="2.3 迁移学习（Transfer Learning）"></a>2.3 迁移学习（Transfer Learning）</h2><p>假设一样我们要做猫和狗的分类问题</p>
 <p>我们也一样只有少量的有labeled的data；但是我们现在有大量的不相干的data(不是猫和狗的图片，而是一些其他不相干的图片)，在这些大量的data里面，它可能有label也可能没有label</p>
 <p>Transfer Learning要解决的问题是，这一堆不相干的data可以对结果带来什么样的帮助</p>
-<center><img src="/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/transfer-Learning.png" alt="transfer" width="60%;"></center>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/transfer-Learning.png" alt="transfer" width="60%;"></center>
 
 <h2 id="2-4-无监督学习（Unsupervised-Learning）"><a href="#2-4-无监督学习（Unsupervised-Learning）" class="headerlink" title="2.4 无监督学习（Unsupervised Learning）"></a>2.4 无监督学习（Unsupervised Learning）</h2><p>区别于supervised learning，unsupervised learning希望机器学到无师自通，在完全没有任何label的情况下，机器到底能学到什么样的知识</p>
 <p>举例来说，如果我们给机器看大量的文章，机器看过大量的文章之后，它到底能够学到什么事情？它能不能学会每个词汇的意思？</p>
 <p>学会每个词汇的意思可以理解为：我们要找一个function，然后把一个词汇丢进去，机器要输出告诉你说这个词汇是什么意思，也许他用一个向量来表示这个词汇的不同的特性，不同的attribute</p>
 <p>又比如，我们带机器去逛动物园，给他看大量的动物的图片，对于unsupervised learning来说，我们的data中只有给function的输入的大量图片，没有任何的输出标注；在这种情况下，机器该怎么学会根据testing data的输入来自己生成新的图片？</p>
-<center><img src="/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/unsupervised-Learning.png" width="60%;"></center>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/unsupervised-Learning.png" width="60%;"></center>
 
 <h2 id="2-5-结构化学习（Structured-Learning）"><a href="#2-5-结构化学习（Structured-Learning）" class="headerlink" title="2.5 结构化学习（Structured Learning）"></a>2.5 结构化学习（Structured Learning）</h2><p>在structured Learning里，我们要机器输出的是，一个有结构性的东西</p>
 <p>在分类的问题中，机器输出的只是一个选项；在structured类的problem里面，机器要输出的是一个复杂的物件</p>
 <p>举例来说，在语音识别的情境下，机器的输入是一个声音信号，输出是一个句子；句子是由许多词汇拼凑而成，它是一个有结构性的object</p>
 <p>或者说机器翻译、人脸识别(标出不同的人的名称)</p>
 <p>比如<strong>GAN</strong>也是structured Learning的一种方法</p>
-<center><img src="/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/structured-Learning.png" alt="structured" width="60%;"></center>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/structured-Learning.png" alt="structured" width="60%;"></center>
 
 
 
@@ -405,7 +405,7 @@
 <ul>
 <li>比如训练一个聊天机器人，让它跟客人直接对话；如果客人勃然大怒把电话挂掉了，那机器就学到一件事情，刚才做错了，它不知道自己哪里做错了，必须自己回去反省检讨到底要如何改进，比如一开始不应该打招呼吗？还是中间不能骂脏话之类的</li>
 </ul>
-<center><img src="/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/reinforcement-Learning.png" alt="reinforcement" width="60%;"></center>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/reinforcement-Learning.png" alt="reinforcement" width="60%;"></center>
 
 <p>再拿下棋这件事举例，supervised Learning是说看到眼前这个棋盘，告诉机器下一步要走什么位置；而reinforcement Learning是说让机器和对手互弈，下了好几手之后赢了，机器就知道这一局棋下的不错，但是到底哪一步是赢的关键，机器是不知道的，他只知道自己是赢了还是输了</p>
 <p>其实Alpha Go是用supervised Learning+reinforcement Learning的方式去学习的，机器先是从棋谱学习，有棋谱就可以做supervised的学习；之后再做reinforcement Learning，机器的对手是另外一台机器，Alpha Go就是和自己下棋，然后不断的进步。</p>
@@ -454,7 +454,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" title="1-什么是机器学习">https://yangchen.pro/2020/09/19/1-什么是机器学习/</a>
+    <a href="https://yangchen.pro/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" title="1-什么是机器学习">https://yangchen.pro/机器学习/“有手就行”系列/1-什么是机器学习/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -474,11 +474,11 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/09/19/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/" rel="prev" title="机器学习“有手就行”系列">
+    <a href="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/" rel="prev" title="机器学习“有手就行”系列">
       <i class="fa fa-chevron-left"></i> 机器学习“有手就行”系列
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/09/19/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/" rel="next" title="2-回归（Regression）">
+    <a href="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/" rel="next" title="2-回归（Regression）">
       2-回归（Regression） <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
@@ -555,7 +555,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">6</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -615,12 +615,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">25k字</span>
+    <span title="站点总字数">49k字</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">22 分钟</span>
+    <span title="站点阅读时长">44 分钟</span>
 </div>
 
         

@@ -17,13 +17,13 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yangchen.pro","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"yangchen.pro","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="1. TP、FP、TN、FN    指标 二类 多类     TP 正例预测为正例 将属于某分类的加密流量识别为该分类   FP 负例预测为正例 将不属于某分类的加密流量识别为该分类   TN 负例预测为负例 将不属于某分类的加密流量识别为非该分类   FN 正例预测为负例 将属于某分类的加密流量识别为其他分类">
 <meta property="og:type" content="article">
 <meta property="og:title" content="加密流量识别评价常用指标">
-<meta property="og:url" content="https://yangchen.pro/2020/09/23/%E5%8A%A0%E5%AF%86%E6%B5%81%E9%87%8F%E8%AF%86%E5%88%AB%E8%AF%84%E4%BB%B7%E5%B8%B8%E7%94%A8%E6%8C%87%E6%A0%87/index.html">
+<meta property="og:url" content="https://yangchen.pro/%E7%BD%91%E7%BB%9C%E6%B5%8B%E9%87%8F%E4%B8%8E%E8%A1%8C%E4%B8%BA%E5%88%86%E6%9E%90/%E5%8A%A0%E5%AF%86%E6%B5%81%E9%87%8F%E8%AF%86%E5%88%AB%E8%AF%84%E4%BB%B7%E5%B8%B8%E7%94%A8%E6%8C%87%E6%A0%87/index.html">
 <meta property="og:site_name" content="CBlog">
 <meta property="og:description" content="1. TP、FP、TN、FN    指标 二类 多类     TP 正例预测为正例 将属于某分类的加密流量识别为该分类   FP 负例预测为正例 将不属于某分类的加密流量识别为该分类   TN 负例预测为负例 将不属于某分类的加密流量识别为非该分类   FN 正例预测为负例 将属于某分类的加密流量识别为其他分类">
 <meta property="og:locale" content="zh_CN">
@@ -35,7 +35,7 @@
 <meta property="article:tag" content="流量分类">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://yangchen.pro/2020/09/23/%E5%8A%A0%E5%AF%86%E6%B5%81%E9%87%8F%E8%AF%86%E5%88%AB%E8%AF%84%E4%BB%B7%E5%B8%B8%E7%94%A8%E6%8C%87%E6%A0%87/">
+<link rel="canonical" href="https://yangchen.pro/%E7%BD%91%E7%BB%9C%E6%B5%8B%E9%87%8F%E4%B8%8E%E8%A1%8C%E4%B8%BA%E5%88%86%E6%9E%90/%E5%8A%A0%E5%AF%86%E6%B5%81%E9%87%8F%E8%AF%86%E5%88%AB%E8%AF%84%E4%BB%B7%E5%B8%B8%E7%94%A8%E6%8C%87%E6%A0%87/">
 
 
 <script id="page-configurations">
@@ -140,7 +140,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">4</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">6</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -201,7 +201,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yangchen.pro/2020/09/23/%E5%8A%A0%E5%AF%86%E6%B5%81%E9%87%8F%E8%AF%86%E5%88%AB%E8%AF%84%E4%BB%B7%E5%B8%B8%E7%94%A8%E6%8C%87%E6%A0%87/">
+    <link itemprop="mainEntityOfPage" href="https://yangchen.pro/%E7%BD%91%E7%BB%9C%E6%B5%8B%E9%87%8F%E4%B8%8E%E8%A1%8C%E4%B8%BA%E5%88%86%E6%9E%90/%E5%8A%A0%E5%AF%86%E6%B5%81%E9%87%8F%E8%AF%86%E5%88%AB%E8%AF%84%E4%BB%B7%E5%B8%B8%E7%94%A8%E6%8C%87%E6%A0%87/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -364,7 +364,7 @@ COMP_i=\frac{REC_i}{PR_i}</script><p>误报率、精确率和召回率反映了�
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://yangchen.pro/2020/09/23/%E5%8A%A0%E5%AF%86%E6%B5%81%E9%87%8F%E8%AF%86%E5%88%AB%E8%AF%84%E4%BB%B7%E5%B8%B8%E7%94%A8%E6%8C%87%E6%A0%87/" title="加密流量识别评价常用指标">https://yangchen.pro/2020/09/23/加密流量识别评价常用指标/</a>
+    <a href="https://yangchen.pro/%E7%BD%91%E7%BB%9C%E6%B5%8B%E9%87%8F%E4%B8%8E%E8%A1%8C%E4%B8%BA%E5%88%86%E6%9E%90/%E5%8A%A0%E5%AF%86%E6%B5%81%E9%87%8F%E8%AF%86%E5%88%AB%E8%AF%84%E4%BB%B7%E5%B8%B8%E7%94%A8%E6%8C%87%E6%A0%87/" title="加密流量识别评价常用指标">https://yangchen.pro/网络测量与行为分析/加密流量识别评价常用指标/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -386,10 +386,13 @@ COMP_i=\frac{REC_i}{PR_i}</script><p>误报率、精确率和召回率反映了�
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/09/19/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/" rel="prev" title="2-回归（Regression）">
+    <a href="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/" rel="prev" title="2-回归（Regression）">
       <i class="fa fa-chevron-left"></i> 2-回归（Regression）
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE%EF%BC%88Error%EF%BC%89/" rel="next" title="3-误差（Error）">
+      3-误差（Error） <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -464,7 +467,7 @@ COMP_i=\frac{REC_i}{PR_i}</script><p>误报率、精确率和召回率反映了�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">6</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -524,12 +527,12 @@ COMP_i=\frac{REC_i}{PR_i}</script><p>误报率、精确率和召回率反映了�
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">25k字</span>
+    <span title="站点总字数">49k字</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">22 分钟</span>
+    <span title="站点阅读时长">44 分钟</span>
 </div>
 
         

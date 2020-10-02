@@ -1,0 +1,978 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>机器学习“有手就行”系列</title>
+    <url>/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/</url>
+    <content><![CDATA[<hr>
+<a id="more"></a>
+<p>本系列教程来自台湾大学<strong>李宏毅</strong>老师的<strong>机器学习</strong>课程，在 <a href="https://github.com/Sakura-gh">Sakura-gh</a> 和 <a href="https://github.com/datawhalechina">datawhalechina</a> 的笔记基础之上进行了整理和优化，同时也参考了其他大量的笔记与博客。</p>
+<h1 id="1-关于课程"><a href="#1-关于课程" class="headerlink" title="1. 关于课程"></a>1. 关于课程</h1><div class="note success">
+            <p>李宏毅老师的机器学习视频是机器学习领域经典的中文视频之一，也被称为中文世界中最好的机器学习视频。李老师以幽默风趣的上课风格让很多晦涩难懂的机器学习理论变得轻松易懂，并且老师会通过很多有趣的例子结合机器学习理论在课堂上展现出来，并且逐步推导深奥的理论知识。比如老师会经常用宝可梦来结合很多机器学习算法。对于想入门机器学习又想看中文讲解的人来说绝对是非常推荐的。</p>
+          </div>
+<h1 id="2-学习路线"><a href="#2-学习路线" class="headerlink" title="2. 学习路线"></a>2. 学习路线</h1><center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/learning_map.png" alt="Learning Map" style="zoom:60%;"></center>
+
+
+
+<h1 id="3-系列文章"><a href="#3-系列文章" class="headerlink" title="3. 系列文章"></a>3. 系列文章</h1><p>01 - <a href="https://yangchen.pro/2020/09/19/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">什么是机器学习</a></p>
+<p>02 - <a href="https://yangchen.pro/2020/09/19/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/">回归（Regression）</a></p>
+<p>03 - <a href="https://yangchen.pro/2020/09/19/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/">误差（Error）</a></p>
+<h1 id="4-参考链接"><a href="#4-参考链接" class="headerlink" title="4. 参考链接"></a>4. 参考链接</h1><ul>
+<li>课程网站：<a href="http://speech.ee.ntu.edu.tw/~tlkagk/courses.html">http://speech.ee.ntu.edu.tw/~tlkagk/courses.html</a></li>
+<li>Sakura-gh/ML-notes：<a href="https://github.com/Sakura-gh/ML-notes">https://github.com/Sakura-gh/ML-notes</a></li>
+<li>datawhalechina/leeml-notes：<a href="https://github.com/datawhalechina/leeml-notes">https://github.com/datawhalechina/leeml-notes</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>机器学习</category>
+        <category>“有手就行”系列</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>3-误差</title>
+    <url>/uncategorized/3-%E8%AF%AF%E5%B7%AE/</url>
+    <content><![CDATA[<p>不同的模型，它对应的误差（Error）是不同的；越复杂的模型，也许表现会越差，所以本文要讨论的问题是：误差是如何产生的。</p>
+<a id="more"></a>
+<ul>
+<li>error due to <span style="background-color:#FFF000">bias</span></li>
+<li>error due to <span style="background-color:#FFF000">variance</span></li>
+</ul>
+<p>了解error的来源其实是很重要的，因为我们可以针对它挑选适当的方法来提升自己的模型，提高模型的准确率，而不会毫无头绪</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE/estimator.png" style="width:60%;"></center>
+
+
+<h4 id="1-抽样分布"><a href="#1-抽样分布" class="headerlink" title="1. 抽样分布"></a>1. 抽样分布</h4><h5 id="1-1-真值-widehat-y-和估测值-y"><a href="#1-1-真值-widehat-y-和估测值-y" class="headerlink" title="1.1 真值 $\widehat{y}$ 和估测值 $y^*$"></a>1.1 真值 $\widehat{y}$ 和估测值 $y^*$</h5><p>$\widehat{y}$ 表示那个真正的function，而 $f^*$ 表示这个 $\widehat{f}$ 的估测值estimator</p>
+<p>就好像在打靶，$\widehat{f}$ 是靶的中心点，收集到一些data做training以后，你会得到一个你觉得最好的function即 $f^<em>$，这个$f^</em>$落在靶上的某个位置，它跟靶中心有一段距离，这段距离就是由Bias和variance决定的</p>
+<p>bias：偏差；variance：方差  -&gt; 实际上对应着物理实验中系统误差和随机误差的概念，假设有n组数据，每一组数据都会产生一个相应的$f^<em>$，此时bias表示所有$f^</em>$的平均落靶位置和真值靶心的距离，variance表示这些$f^*$的集中程度</p>
+<h5 id="1-2-抽样分布的理论-概率论与数理统计"><a href="#1-2-抽样分布的理论-概率论与数理统计" class="headerlink" title="1.2 抽样分布的理论(概率论与数理统计)"></a>1.2 抽样分布的理论(概率论与数理统计)</h5><p>假设独立变量为x(这里的x代表每次独立地从不同的training data里训练找到的$f^*$)，那么</p>
+<p>总体期望$E(x)=u$ ；总体方差$Var(x)=\sigma^2$ </p>
+<h6 id="1）-用样本均值-overline-x-估测总体期望-u"><a href="#1）-用样本均值-overline-x-估测总体期望-u" class="headerlink" title="1） 用样本均值 $\overline{x}$ 估测总体期望 $u$"></a>1） 用样本均值 $\overline{x}$ 估测总体期望 $u$</h6><p>由于我们只有有限组样本 $Sample \ N \ points:\{x^1,x^2,…,x^N\}$，故：</p>
+<ul>
+<li>样本均值 $\overline{x}=\frac{1}{N}\sum\limits_{i=1}^{N}x^i$ </li>
+<li>样本均值的期望 $E(\overline{x})=E(\frac{1}{N}\sum\limits_{i=1}^{N}x^i)=u$ ; </li>
+<li>样本均值的方差 $Var(\overline{x})=\frac{\sigma^2}{N}$</li>
+</ul>
+<p><strong>样本均值 $\overline{x}$的期望是总体期望$u$</strong>，也就是说 $\overline{x}$ 是按概率对称地分布在总体期望 $u$ 的两侧的；而 $\overline{x}$ 分布的密集程度取决于 N，即数据量的大小，如果 N 比较大，$\overline{x}$ 就会比较集中，如果 N 比较小，$\overline{x}$ 就会以 $u$ 为中心分散开来</p>
+<p>综上，<span style="background-color:#FFF000">样本均值 $\overline{x}$ 以总体期望 $u$ 为中心对称分布，可以用来估测总体期望 $u$</span></p>
+<h6 id="2）用样本方差-s-2-估测总体方差-sigma-2"><a href="#2）用样本方差-s-2-估测总体方差-sigma-2" class="headerlink" title="2）用样本方差 $s^2$ 估测总体方差 $\sigma^2$"></a>2）用样本方差 $s^2$ 估测总体方差 $\sigma^2$</h6><p>由于我们只有有限组样本 $Sample \ N \ points:\{x^1,x^2,…,x^N\}$，故</p>
+<p>样本均值$\overline{x}=\frac{1}{N}\sum\limits_{i=1}^{N}x^i$ ；样本方差$s^2=\frac{1}{N-1}\sum\limits_{i=1}^N(x^i-\overline{x})^2$ ；样本方差的期望$E(s^2)=\sigma^2$ ； 样本方差的方差$Var(s^2)=\frac{2\sigma^4}{N-1}$</p>
+<p><strong>样本方差$s^2$的期望是总体方差$\sigma^2$</strong>，而$s^2$分布的密集程度也取决于N</p>
+<p>同理，==样本方差$s^2$以总体方差$\sigma^2$为中心对称分布，可以用来估测总体方差$\sigma^2$==</p>
+<h4 id="2-回到regression的问题上来"><a href="#2-回到regression的问题上来" class="headerlink" title="2 回到regression的问题上来"></a>2 回到regression的问题上来</h4><p>现在我们要估测的是靶的中心 $\widehat{f}$，每次collect data训练出来的 $f^*$ 是打在靶上的某个点；产生的error取决于：</p>
+<ul>
+<li>多次实验得到的 $f^*$ 的期望 $\overline{f}$ 与靶心 $\widehat{f}$ 之间的 bias——$E(f^*)$，可以形象地理解为瞄准的位置和靶心的距离的偏差</li>
+<li>多次实验的 $f^*$ 之间的 variance——$Var(f^*)$ ，可以形象地理解为多次打在靶上的点的集中程度</li>
+</ul>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE/bias-variance.png"></center>
+
+<p>说到这里，可能会产生一个疑惑：我们之前不就只做了一次实验吗？我们就collect了十笔data，然后training出来了一个$f^*$，然后就结束了。那怎么找很多个$f^*$呢？怎么知道它的bias和variance有多大呢？</p>
+<h5 id="2-1-f-取决于model的复杂程度以及data的数量"><a href="#2-1-f-取决于model的复杂程度以及data的数量" class="headerlink" title="2.1 $f^*$ 取决于model的复杂程度以及data的数量"></a>2.1 $f^*$ 取决于model的复杂程度以及data的数量</h5><p>假设这里有多个平行宇宙，每个空间里都在用10只宝可梦的data去找$f^*$，由于不同宇宙中宝可梦的data是不同的，因此即使使用的是同一个model，最终获得的$f^*$都会是不同的</p>
+<p>于是我们做100次相同的实验，把这100次实验找出来的100条$f^*$的分布画出来</p>
+<h5 id="2-2-f-的variance取决于model的复杂程度和data的数量"><a href="#2-2-f-的variance取决于model的复杂程度和data的数量" class="headerlink" title="2.2 $f^*$的variance取决于model的复杂程度和data的数量"></a>2.2 $f^*$的variance取决于model的复杂程度和data的数量</h5><p>$f^*$的variance是由model决定的，一个简单的model在不同的training data下可以获得比较稳定分布的$f^*$，而复杂的model在不同的training data下的分布比较杂乱(如果data足够多，那复杂的model也可以得到比较稳定的分布)</p>
+<p>如果采用比较简单的model，那么每次在不同data下的实验所得到的不同的$f^*$之间的variance是比较小的，就好像说，你在射击的时候，每次击中的位置是差不多的，就如同下图中的linear model，100次实验找出来的$f^*$都是差不多的</p>
+<p>但是如果model比较复杂，那么每次在不同data下的实验所得到的不同的$f^*$之间的variance是比较大的，它的散布就会比较开，就如同下图中含有高次项的model，每一条$f^*$都长得不太像，并且散布得很开</p>
+<blockquote>
+<p>那为什么比较复杂的model，它的散布就比较开呢？比较简单的model，它的散布就比较密集呢？</p>
+</blockquote>
+<p>原因其实很简单，其实前面在讲regularization正规化的时候也提到了部分原因。简单的model实际上就是没有高次项的model，或者高次项的系数非常小的model，这样的model表现得相当平滑，受到不同的data的影响是比较小的</p>
+<p>举一个很极端的例子，我们的整个model(function set)里面，就一个function：f=c，这个function只有一个常数项，因此无论training data怎么变化，从这个最简单的model里找出来的$f^*$都是一样的，它的variance就是等于0</p>
+<h5 id="2-3-f-的bias只取决于model的复杂程度"><a href="#2-3-f-的bias只取决于model的复杂程度" class="headerlink" title="2.3 $f^*$ 的bias只取决于model的复杂程度"></a>2.3 $f^*$ 的bias只取决于model的复杂程度</h5><p>bias是说，我们把所有的$f^*$平均起来得到$E(f^*)=\overline{f^*}$，这个$\overline{f^*}$与真值$\widehat{f}$有多接近</p>
+<p>当然这里会有一个问题是说，总体的真值$\widehat{f}$我们根本就没有办法知道，因此这里只是假定了一个$\widehat{f}$</p>
+<p>下面的图示中，<strong>红色</strong>线条部分代表5000次实验分别得到的$f^*$，<strong>黑色</strong>线条部分代表真实值$\widehat{f}$，<strong>蓝色</strong>线条部分代表5000次实验得到的$f^*$的平均值$\overline{f}$</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE/5000-tests.png" style="width:60%;"></center>
+
+<p>根据上图我们发现，当model比较简单的时候，每次实验得到的$f^*$之间的variance会比较小，这些$f^*$会稳定在一个范围内，但是它们的平均值$\overline{f}$距离真实值$\widehat{f}$会有比较大的偏差；而当model比较复杂的时候，每次实验得到的$f^*$之间的variance会比较大，实际体现出来就是每次重新实验得到的$f^*$都会与之前得到的有较大差距，但是这些差距较大的$f^*$的平均值$\overline{f}$却和真实值$\widehat{f}$比较接近</p>
+<p>上图分别是含有一次项、三次项和五次项的model做了5000次实验后的结果，你会发现model越复杂，比如含有5次项的model那一幅图，每一次实验得到的$f^*$几乎是杂乱无章，遍布整幅图的；但是他们的平均值却和真实值$\widehat{f}$吻合的很好。也就是说，复杂的model，单次实验的结果是没有太大参考价值的，但是如果把考虑多次实验的结果的平均值，也许会对最终的结果有帮助</p>
+<p>注：这里的单次实验指的是，用一组training data训练出model的一组有效参数以构成$f^*$(每次独立实验使用的training data都是不同的)</p>
+<p><strong>因此：</strong></p>
+<ul>
+<li>如果是一个比较简单的model，那它有比较小的variance和比较大的bias。就像下图中左下角的打靶模型，每次实验的$f^*$都比较集中，但是他们平均起来距离靶心会有一段距离(比较适合实验次数少甚至只有单次实验的情况)</li>
+<li>如果是一个比较复杂的model，每次实验找出来的$f^*$都不一样，它有比较大的variance但是却有比较小的bias。就像下图中右下角的打靶模型，每次实验的$f^*$都比较分散，但是他们平均起来的位置与靶心比较接近(比较适合多次实验的情况)</li>
+</ul>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE/model-bias.png" style="width:60%;"></center>
+
+<h5 id="2-4-为什么会这样？"><a href="#2-4-为什么会这样？" class="headerlink" title="2.4 为什么会这样？"></a>2.4 为什么会这样？</h5><p>实际上我们的model就是一个function set，当你定好一个model的时候，实际上就已经定好这个function set的范围了，那个最好的function只能从这个function set里面挑出来</p>
+<p>如果是一个简单的model，它的function set的space是比较小的，这个范围可能根本就没有包含你的target；如果这个function set没有包含target，那么不管怎么sample，平均起来永远不可能是target(这里的space指上图中左下角那个被model圈起来的空间)</p>
+<p>如果这个model比较复杂，那么这个model所代表的function set的space是比较大的(简单的model实际上就是复杂model的子集)，那它就很有可能包含target，只是它没有办法找到那个target在哪，因为你给的training data不够，你给的training data每一次都不一样，所以他每一次找出来的$f^*$都不一样，但是如果他们是散布在这个target附近的，那平均起来，实际上就可以得到和target比较接近的位置(这里的space指上图中右下角那个被model圈起来的空间)</p>
+<h4 id="3-Bias-vs-Variance"><a href="#3-Bias-vs-Variance" class="headerlink" title="3. Bias vs Variance"></a>3. Bias vs Variance</h4><p>由前面的讨论可知，比较简单的model，variance比较小，bias比较大；而比较复杂的model，bias比较小，variance比较大</p>
+<h5 id="3-1-bias和variance对error的影响"><a href="#3-1-bias和variance对error的影响" class="headerlink" title="3.1 bias和variance对error的影响"></a>3.1 bias和variance对error的影响</h5><p>因此下图中(也就是之前我们得到的从最高项为一次项到五次项的五个model的error表现)，绿色的线代表variance造成的error，红色的线代表bias造成的error，蓝色的线代表这个model实际观测到的error</p>
+<p>$error_{实际}=error_{variance}+error_{bias}——蓝线为红线和绿线之和$</p>
+<p>可以发现，随着model的逐渐复杂：</p>
+<ul>
+<li>bias逐渐减小，bias所造成的error也逐渐下降，也就是打靶的时候瞄得越来越准，体现为图中的红线</li>
+<li>variance逐渐变大，variance所造成的error也逐渐增大，也就是虽然瞄得越来越准，但是每次射出去以后，你的误差是越来越大的，体现为图中的绿线</li>
+<li>当bias和variance这两项同时被考虑的时候，得到的就是图中的蓝线，也就是实际体现出来的error的变化；实际观测到的error先是减小然后又增大，因此实际error为最小值的那个点，即为bias和variance的error之和最小的点，就是表现最好的model</li>
+<li></li>
+<li>==<strong>如果实际error主要来自于variance很大，这个状况就是overfitting过拟合；如果实际error主要来自于bias很大，这个状况就是underfitting欠拟合</strong>==(可以理解为，overfitting就是过分地包围了靶心所在的space，而underfitting则是还未曾包围到靶心所在的space)</li>
+</ul>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE/bias-vs-variance.png" style="width:60%;"></center>
+
+<p>这就是为什么我们之前要先计算出每一个model对应的error(每一个model都有唯一对应的$f^*$，因此也有唯一对应的error)，再挑选error最小的model的原因，只有这样才能综合考虑bias和variance的影响，找到一个实际error最小的model</p>
+<h5 id="3-2-必须要知道自己的error主要来自于哪里"><a href="#3-2-必须要知道自己的error主要来自于哪里" class="headerlink" title="3.2 必须要知道自己的error主要来自于哪里"></a>3.2 必须要知道自己的error主要来自于哪里</h5><h6 id="1）你现在的问题是bias大，还是variance大？"><a href="#1）你现在的问题是bias大，还是variance大？" class="headerlink" title="1）你现在的问题是bias大，还是variance大？"></a>1）你现在的问题是bias大，还是variance大？</h6><p>当你自己在做research的时候，你必须要搞清楚，手头上的这个model，它目前主要的error是来源于哪里；你觉得你现在的问题是bias大，还是variance大</p>
+<p>你应该先知道这件事情，你才能知道你的future work，你要improve你的model的时候，你应该要走哪一个方向</p>
+<h6 id="2）那怎么知道现在是bias大还是variance大呢？"><a href="#2）那怎么知道现在是bias大还是variance大呢？" class="headerlink" title="2）那怎么知道现在是bias大还是variance大呢？"></a>2）那怎么知道现在是bias大还是variance大呢？</h6><ul>
+<li><p>如果model没有办法fit training data的examples，代表bias比较大，这时是underfitting</p>
+<p>  形象地说，就是该model找到的$f^*$上面并没有training data的大部分样本点，如下图中的linear model，我们只是example抽样了这几个蓝色的样本点，而这个model甚至没有fit这少数几个蓝色的样本点(这几个样本点没有在$f^*$上)，代表说这个model跟正确的model是有一段差距的，所以这个时候是bias大的情况，是underfitting</p>
+</li>
+<li><p>如果model可以fit training data，在training data上得到小的error，但是在testing data上，却得到一个大的error，代表variance比较大，这时是overfitting</p>
+</li>
+</ul>
+<h6 id="3）如何针对性地处理bias大-or-variance大的情况呢？"><a href="#3）如何针对性地处理bias大-or-variance大的情况呢？" class="headerlink" title="3）如何针对性地处理bias大 or variance大的情况呢？"></a>3）如何针对性地处理bias大 or variance大的情况呢？</h6><p>遇到bias大或variance大的时候，你其实是要用不同的方式来处理它们</p>
+<p>1、<strong>如果bias比较大</strong></p>
+<p>bias大代表，你现在这个model里面可能根本没有包含你的target，$\widehat{f}$可能根本就不在你的function set里</p>
+<p>对于error主要来自于bias的情况，是由于该model(function set)本来就不好，collect更多的data是没有用的，必须要从model本身出发</p>
+<ul>
+<li><p>redesign，重新设计你的model</p>
+<ul>
+<li><p>增加更多的features作为model的input输入变量</p>
+<p>  比如pokemon的例子里，只考虑进化前cp值可能不够，还要考虑hp值、species种类…作为model新的input变量</p>
+</li>
+<li><p>让model变得更复杂，增加高次项</p>
+<p>  比如原本只是linear model，现在考虑增加二次项、三次项…</p>
+</li>
+</ul>
+</li>
+</ul>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE/large-bias.png" style="width:60%;"></center>
+
+<p>2、<strong>如果variance比较大</strong></p>
+<ul>
+<li>增加data<ul>
+<li>如果是5次式，找100个$f^*$，每次实验我们只用10只宝可梦的数据训练model，那我们找出来的100个$f^*$的散布就会像下图一样杂乱无章；但如果每次实验我们用100只宝可梦的数据训练model，那我们找出来的100个$f^*$的分布就会像下图所示一样，非常地集中</li>
+<li>增加data是一个很有效控制variance的方法，假设你variance太大的话，collect data几乎是一个万能丹一样的东西，并且它不会伤害你的bias</li>
+<li>但是它存在一个很大的问题是，实际上并没有办法去collect更多的data</li>
+<li>如果没有办法collect更多的data，其实有一招，根据你对这个问题的理解，自己去generate更多“假的”data<ul>
+<li>比如手写数字识别，因为每个人手写数字的角度都不一样，那就把所有training data里面的数字都左转15°，右转15°</li>
+<li>比如做火车的影像辨识，只有从左边开过来的火车影像资料，没有从右边开过来的火车影像资料，该怎么办？实际上可以把每张图片都左右颠倒，就generate出右边的火车数据了，这样就多了一倍data出来</li>
+<li>比如做语音辨识的时候，只有男生说的“你好”，没有女生说的“你好”，那就用男生的声音用一个变声器把它转化一下，这样男女生的声音就可以互相转化，这样data就可以多出来</li>
+<li>比如现在你只有录音室里录下的声音，但是detection实际要在真实场景下使用的，那你就去真实场景下录一些噪音加到原本的声音里，就可以generate出符合条件的data了</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Regularization(正规化)<ul>
+<li>就是在loss function里面再加一个与model高次项系数相关的term，它会希望你的model里高次项的参数越小越好，也就是说希望你今天找出来的曲线越平滑越好；这个新加的term前面可以有一个weight，代表你希望你的曲线有多平滑</li>
+<li>下图中Regularization部分，左边第一幅图是没有加regularization的test；第二幅图是加了regularization后的情况，一些怪怪的、很不平滑的曲线就不会再出现，所有曲线都集中在比较平滑的区域；第三幅图是增加weight的情况，让曲线变得更平滑</li>
+<li>加了regularization以后，因为你强迫所有的曲线都要比较平滑，所以这个时候也会让你的variance变小；但regularization是可能会伤害bias的，因为它实际上调整了function set的space范围，变成它只包含那些比较平滑的曲线，这个缩小的space可能没有包含原先在更大space内的$\widehat{f}$，因此伤害了bias，所以当你做regularization的时候，需要调整regularization的weight，在variance和bias之间取得平衡</li>
+</ul>
+</li>
+</ul>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE/large-variance.png" style="width:60%;"></center>
+
+<p>注：variance比较大的case，加以图例解释如下：(假设这里我们无法获得更多的data)</p>
+<p>1、蓝色区域代表最初的情况，此时model比较复杂，function set的space范围比较大，包含了target靶心，但由于data不够，$f^*$比较分散，variance比较大</p>
+<p>2、红色区域代表进行regularization之后的情况，此时model的function set范围被缩小成只包含平滑的曲线，space减小，variance当然也跟着变小，但这个缩小后的space实际上并没有包含原先已经包含的target靶心，因此该model的bias变大</p>
+<p>3、橙色区域代表增大regularization的weight的情况，增大weight实际上就是放大function set的space，慢慢调整至包含target靶心，此时该model的bias变小，而相较于一开始的case，由于限定了曲线的平滑度(由weight控制平滑度的阈值)，该model的variance也比较小</p>
+<p>实际上，通过regularization优化model的过程就是上述的1、2、3步骤，不断地调整regularization的weight，使model的bias和variance达到一个最佳平衡的状态(可以通过error来评价状态的好坏，weight需要慢慢调参)</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE/regularization-illustration.png" style="width:60%;"></center>
+
+<h4 id="4-Model-Selection"><a href="#4-Model-Selection" class="headerlink" title="4. Model Selection"></a>4. Model Selection</h4><p>我们现在会遇到的问题往往是这样：我们有很多个model可以选择，还有很多参数可以调，比如regularization的weight，那通常我们是在bias和variance之间做一些trade-off权衡</p>
+<p>我们希望找一个model，它variance够小，bias也够小，这两个合起来给我们最小的testing data的error</p>
+<h5 id="但是以下这些事情，是你不应该做的："><a href="#但是以下这些事情，是你不应该做的：" class="headerlink" title="但是以下这些事情，是你不应该做的："></a>但是以下这些事情，是你不应该做的：</h5><p>你手上有training set，有testing set，接下来你想知道model1、model2、model3里面，应该选哪一个model，然后你就分别用这三个model去训练出$f_1^*,f_2^*,f_3^*$，然后把它apply到testing set上面，分别得到三个error为0.9，0.7，0.5，这里很直觉地会认为是model3最好</p>
+<p>但是现在可能的问题是，这个testing set是你自己手上的testing set，是你自己拿来衡量model好坏的testing set，真正的testing set是你没有的；注意到你自己手上的这笔testing set，它有自己的一个bias(这里的bias跟之前提到的略有不同，可以理解为自己的testing data跟实际的testing data会有一定的偏差存在)</p>
+<p>所以你今天那这个testing set来选择最好的model的时候，它在真正的testing set上不见得是最好的model，通常是比较差的，所以你实际得到的error是会大于你在自己的testing set上估测到的0.5</p>
+<p>以PM2.5预测为例，提供的数据分为training set，public testing set和private testing set三部分，其中public的testing set是供你测试自己的model的，private的testing data是你暂且未知的真正测试数据，现在你的model3在public testing set上的error为0.5，已经成功beat baseline，但是在private的testing set上，你的model3也许根本就没有beat the baseline，反而是model1和model2可能会表现地更好</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE/model-selection.png" style="width:60%;"></center>
+
+<h5 id="怎样做才是可靠的呢？"><a href="#怎样做才是可靠的呢？" class="headerlink" title="怎样做才是可靠的呢？"></a>怎样做才是可靠的呢？</h5><h6 id="training-data分成training-set和validation-set"><a href="#training-data分成training-set和validation-set" class="headerlink" title="training data分成training set和validation set"></a>training data分成training set和validation set</h6><p>你要做的事情是，把你的training set分成两组：</p>
+<ul>
+<li>一组是真正拿来training model的，叫做training set(训练集)</li>
+<li>另外一组不拿它来training model，而是拿它来选model，叫做validation set(验证集)</li>
+</ul>
+<p>==先在training set上找出每个model最好的function $f^*$，然后用validation set来选择你的model==</p>
+<p>也就是说，你手头上有3个model，你先把这3个model用training set训练出三个$f^*$，接下来看一下它们在validation set上的performance</p>
+<p>假设现在model3的performance最好，那你可以直接把这个model3的结果拿来apply在testing data上</p>
+<p>如果你担心现在把training set分成training和validation两部分，感觉training data变少的话，可以这样做：已经从validation决定model3是最好的model，那就定住model3不变(function的表达式不变)，然后用全部的data在model3上面再训练一次(使用全部的data去更新model3表达式的参数)</p>
+<p>这个时候，如果你把这个训练好的model的$f^*$apply到public testing set上面，你可能会得到一个大于0.5的error，虽然这么做，你得到的error表面上看起来是比较大的，但是<strong>这个时候你在public set上的error才能够真正反映你在private set上的error</strong></p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE/cross-validation.png" style="width:60%;"></center>
+
+<h6 id="考虑真实的测试集"><a href="#考虑真实的测试集" class="headerlink" title="考虑真实的测试集"></a>考虑真实的测试集</h6><p>实际上是这样一个关系：</p>
+<blockquote>
+<p>training data(训练集) -&gt; 自己的testing data(测试集) -&gt; 实际的testing data<br>(该流程没有考虑自己的testing data的bias)</p>
+<p>training set(部分训练集) -&gt; validation set(部分验证集) -&gt; 自己的testing data(测试集) -&gt; 实际的testing data<br>(该流程使用自己的testing data和validation来模拟testing data的bias误差，可以真实地反映出在实际的data上出现的error)</p>
+</blockquote>
+<h6 id="真正的error"><a href="#真正的error" class="headerlink" title="真正的error"></a>真正的error</h6><p>当你得到public set上的error的时候(尽管它可能会很大)，不建议回过头去重新调整model的参数，因为当你再回去重新调整什么东西的时候，你就又会把public testing set的bias给考虑进去了，这就又回到了第一种关系，即围绕着有偏差的testing data做model的优化</p>
+<p>这样的话此时你在public set上看到的performance就没有办法反映实际在private set上的performance了，因为你的model是针对public set做过优化的，虽然public set上的error数据看起来可能会更好看，但是针对实际未知的private set，这个“优化”带来的可能是反作用，反而会使实际的error变大</p>
+<p>当然，你也许几乎没有办法忍住不去做这件事情，在发paper的时候，有时候你会propose一个方法，那你要attach在benchmark的corpus，如果你在testing set上得到一个差的结果，你也几乎没有办法把持自己不回头去调一下你的model，你肯定不会只是写一个paper说这个方法不work这样子(滑稽</p>
+<p>因此这里只是说，你要keep in mind，如果在那个benchmark corpus上面所看到的testing的performance，它的error，肯定是大于它在real的application上应该有的值</p>
+<p>比如说你现在常常会听到说，在image lab的那个corpus上面，error rate都降到3%，那个是超越人类了，但是真的是这样子吗？已经有这么多人玩过这个corpus，已经有这么多人告诉你说前面这些方法都不work，他们都帮你挑过model了，你已经用“testing” data调过参数了，所以如果你把那些model真的apply到现实生活中，它的error rate肯定是大于3%的</p>
+<h6 id="如何划分training-set和validation-set？"><a href="#如何划分training-set和validation-set？" class="headerlink" title="如何划分training set和validation set？"></a>如何划分training set和validation set？</h6><p>那如果training set和validation set分坏了怎么办？如果validation也有怪怪的bias，岂不是对结果很不利？那你要做下面这件事情：</p>
+<p>==<strong>N-flod Cross Validation</strong>==</p>
+<p>如果你不相信某一次分train和validation的结果的话，那你就分很多种不同的样子</p>
+<p>比如说，如果你做3-flod的validation，意思就是你把training set分成三份，你每一次拿其中一份当做validation set，另外两份当training；分别在每个情境下都计算一下3个model的error，然后计算一下它的average error；然后你会发现在这三个情境下的average error，是model1最好</p>
+<p>然后接下来，你就把用整个完整的training data重新训练一遍model1的参数；然后再去testing data上test</p>
+<p>原则上是，如果你少去根据public testing set上的error调整model的话，那你在private testing set上面得到的error往往是比较接近public testing set上的error的</p>
+<p><center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE/n-flod-cross-validation.png" style="width:60%;"></center></p>
+<h4 id="5-总结conclusion"><a href="#5-总结conclusion" class="headerlink" title="5. 总结conclusion"></a>5. 总结conclusion</h4><p>1、一般来说，error是bias和variance共同作用的结果</p>
+<p>2、model比较简单和比较复杂的情况：</p>
+<ul>
+<li>当model比较简单的时候，variance比较小，bias比较大，此时$f^*$会比较集中，但是function set可能并没有包含真实值$\widehat{f}$；此时model受bias影响较大</li>
+<li>当model比较复杂的时候，bias比较小，variance比较大，此时function set会包含真实值$\widehat{f}$，但是$f^*$会比较分散；此时model受variance影响较大</li>
+</ul>
+<p>3、区分bias大 or variance大的情况</p>
+<ul>
+<li><p>如果连采样的样本点都没有大部分在model训练出来的$f^*$上，说明这个model太简单，bias比较大，是欠拟合</p>
+</li>
+<li><p>如果样本点基本都在model训练出来的$f^*$上，但是testing data上测试得到的error很大，说明这个model太复杂，variance比较大，是过拟合</p>
+</li>
+</ul>
+<p>4、bias大 or variance大的情况下该如何处理</p>
+<ul>
+<li><p>当bias比较大时，需要做的是重新设计model，包括考虑添加新的input变量，考虑给model添加高次项；然后对每一个model对应的$f^*$计算出error，选择error值最小的model(随model变复杂，bias会减小，variance会增加，因此这里分别计算error，取两者平衡点)</p>
+</li>
+<li><p>当variance比较大时，一个很好的办法是增加data(可以凭借经验自己generate data)，当data数量足够时，得到的$f^*$实际上是比较集中的；如果现实中没有办法collect更多的data，那么就采用regularization正规化的方法，以曲线的平滑度为条件控制function set的范围，用weight控制平滑度阈值，使得最终的model既包含$\widehat{f}$，variance又不会太大</p>
+</li>
+</ul>
+<p>5、如何选择model</p>
+<ul>
+<li>选择model的时候呢，我们手头上的testing data与真实的testing data之间是存在偏差的，因此我们要将training data分成training set和validation set两部分，经过validation挑选出来的model再用全部的training data训练一遍参数，最后用testing data去测试error，这样得到的error是模拟过testing bias的error，与实际情况下的error会比较符合</li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>3-误差（Error）</title>
+    <url>/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE%EF%BC%88Error%EF%BC%89/</url>
+    <content><![CDATA[<p>不同的模型，它对应的误差（Error）是不同的；越复杂的模型，也许表现会越差，所以本文要讨论的问题是：误差是如何产生的。</p>
+<a id="more"></a>
+<ul>
+<li>error due to <span style="background-color:#FFF000">bias</span></li>
+<li>error due to <span style="background-color:#FFF000">variance</span></li>
+</ul>
+<p>了解error的来源其实是很重要的，因为我们可以针对它挑选适当的方法来提升自己的模型，提高模型的准确率，而不会毫无头绪</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE%EF%BC%88Error%EF%BC%89/estimator.png" style="width:60%;"></center>
+
+
+<h4 id="1-抽样分布"><a href="#1-抽样分布" class="headerlink" title="1. 抽样分布"></a>1. 抽样分布</h4><h5 id="1-1-真值-widehat-y-和估测值-y"><a href="#1-1-真值-widehat-y-和估测值-y" class="headerlink" title="1.1 真值 $\widehat{y}$ 和估测值 $y^*$"></a>1.1 真值 $\widehat{y}$ 和估测值 $y^*$</h5><p>$\widehat{y}$ 表示那个真正的function，而 $f^*$ 表示这个 $\widehat{f}$ 的估测值estimator</p>
+<p>就好像在打靶，$\widehat{f}$ 是靶的中心点，收集到一些data做training以后，你会得到一个你觉得最好的function即 $f^<em>$，这个$f^</em>$落在靶上的某个位置，它跟靶中心有一段距离，这段距离就是由Bias和variance决定的</p>
+<p>bias：偏差；variance：方差  -&gt; 实际上对应着物理实验中系统误差和随机误差的概念，假设有n组数据，每一组数据都会产生一个相应的$f^<em>$，此时bias表示所有$f^</em>$的平均落靶位置和真值靶心的距离，variance表示这些$f^*$的集中程度</p>
+<h5 id="1-2-抽样分布的理论-概率论与数理统计"><a href="#1-2-抽样分布的理论-概率论与数理统计" class="headerlink" title="1.2 抽样分布的理论(概率论与数理统计)"></a>1.2 抽样分布的理论(概率论与数理统计)</h5><p>假设独立变量为x(这里的x代表每次独立地从不同的training data里训练找到的$f^*$)，那么</p>
+<p>总体期望$E(x)=u$ ；总体方差$Var(x)=\sigma^2$ </p>
+<h6 id="1）-用样本均值-overline-x-估测总体期望-u"><a href="#1）-用样本均值-overline-x-估测总体期望-u" class="headerlink" title="1） 用样本均值 $\overline{x}$ 估测总体期望 $u$"></a>1） 用样本均值 $\overline{x}$ 估测总体期望 $u$</h6><p>由于我们只有有限组样本 $Sample \ N \ points:\{x^1,x^2,…,x^N\}$，故：</p>
+<ul>
+<li>样本均值 $\overline{x}=\frac{1}{N}\sum\limits_{i=1}^{N}x^i$ </li>
+<li>样本均值的期望 $E(\overline{x})=E(\frac{1}{N}\sum\limits_{i=1}^{N}x^i)=u$ ; </li>
+<li>样本均值的方差 $Var(\overline{x})=\frac{\sigma^2}{N}$</li>
+</ul>
+<p><strong>样本均值 $\overline{x}$的期望是总体期望$u$</strong>，也就是说 $\overline{x}$ 是按概率对称地分布在总体期望 $u$ 的两侧的；而 $\overline{x}$ 分布的密集程度取决于 N，即数据量的大小，如果 N 比较大，$\overline{x}$ 就会比较集中，如果 N 比较小，$\overline{x}$ 就会以 $u$ 为中心分散开来</p>
+<p>综上，<span style="background-color:#FFF000">样本均值 $\overline{x}$ 以总体期望 $u$ 为中心对称分布，可以用来估测总体期望 $u$</span></p>
+<h6 id="2）用样本方差-s-2-估测总体方差-sigma-2"><a href="#2）用样本方差-s-2-估测总体方差-sigma-2" class="headerlink" title="2）用样本方差 $s^2$ 估测总体方差 $\sigma^2$"></a>2）用样本方差 $s^2$ 估测总体方差 $\sigma^2$</h6><p>由于我们只有有限组样本 $Sample \ N \ points:\{x^1,x^2,…,x^N\}$，故</p>
+<p>样本均值$\overline{x}=\frac{1}{N}\sum\limits_{i=1}^{N}x^i$ ；样本方差$s^2=\frac{1}{N-1}\sum\limits_{i=1}^N(x^i-\overline{x})^2$ ；样本方差的期望$E(s^2)=\sigma^2$ ； 样本方差的方差$Var(s^2)=\frac{2\sigma^4}{N-1}$</p>
+<p><strong>样本方差$s^2$的期望是总体方差$\sigma^2$</strong>，而$s^2$分布的密集程度也取决于N</p>
+<p>同理，==样本方差$s^2$以总体方差$\sigma^2$为中心对称分布，可以用来估测总体方差$\sigma^2$==</p>
+<h4 id="2-回到regression的问题上来"><a href="#2-回到regression的问题上来" class="headerlink" title="2 回到regression的问题上来"></a>2 回到regression的问题上来</h4><p>现在我们要估测的是靶的中心 $\widehat{f}$，每次collect data训练出来的 $f^*$ 是打在靶上的某个点；产生的error取决于：</p>
+<ul>
+<li>多次实验得到的 $f^*$ 的期望 $\overline{f}$ 与靶心 $\widehat{f}$ 之间的 bias——$E(f^*)$，可以形象地理解为瞄准的位置和靶心的距离的偏差</li>
+<li>多次实验的 $f^*$ 之间的 variance——$Var(f^*)$ ，可以形象地理解为多次打在靶上的点的集中程度</li>
+</ul>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE%EF%BC%88Error%EF%BC%89/bias-variance.png"></center>
+
+<p>说到这里，可能会产生一个疑惑：我们之前不就只做了一次实验吗？我们就collect了十笔data，然后training出来了一个$f^*$，然后就结束了。那怎么找很多个$f^*$呢？怎么知道它的bias和variance有多大呢？</p>
+<h5 id="2-1-f-取决于model的复杂程度以及data的数量"><a href="#2-1-f-取决于model的复杂程度以及data的数量" class="headerlink" title="2.1 $f^*$ 取决于model的复杂程度以及data的数量"></a>2.1 $f^*$ 取决于model的复杂程度以及data的数量</h5><p>假设这里有多个平行宇宙，每个空间里都在用10只宝可梦的data去找$f^*$，由于不同宇宙中宝可梦的data是不同的，因此即使使用的是同一个model，最终获得的$f^*$都会是不同的</p>
+<p>于是我们做100次相同的实验，把这100次实验找出来的100条$f^*$的分布画出来</p>
+<h5 id="2-2-f-的variance取决于model的复杂程度和data的数量"><a href="#2-2-f-的variance取决于model的复杂程度和data的数量" class="headerlink" title="2.2 $f^*$的variance取决于model的复杂程度和data的数量"></a>2.2 $f^*$的variance取决于model的复杂程度和data的数量</h5><p>$f^*$的variance是由model决定的，一个简单的model在不同的training data下可以获得比较稳定分布的$f^*$，而复杂的model在不同的training data下的分布比较杂乱(如果data足够多，那复杂的model也可以得到比较稳定的分布)</p>
+<p>如果采用比较简单的model，那么每次在不同data下的实验所得到的不同的$f^*$之间的variance是比较小的，就好像说，你在射击的时候，每次击中的位置是差不多的，就如同下图中的linear model，100次实验找出来的$f^*$都是差不多的</p>
+<p>但是如果model比较复杂，那么每次在不同data下的实验所得到的不同的$f^*$之间的variance是比较大的，它的散布就会比较开，就如同下图中含有高次项的model，每一条$f^*$都长得不太像，并且散布得很开</p>
+<blockquote>
+<p>那为什么比较复杂的model，它的散布就比较开呢？比较简单的model，它的散布就比较密集呢？</p>
+</blockquote>
+<p>原因其实很简单，其实前面在讲regularization正规化的时候也提到了部分原因。简单的model实际上就是没有高次项的model，或者高次项的系数非常小的model，这样的model表现得相当平滑，受到不同的data的影响是比较小的</p>
+<p>举一个很极端的例子，我们的整个model(function set)里面，就一个function：f=c，这个function只有一个常数项，因此无论training data怎么变化，从这个最简单的model里找出来的$f^*$都是一样的，它的variance就是等于0</p>
+<h5 id="2-3-f-的bias只取决于model的复杂程度"><a href="#2-3-f-的bias只取决于model的复杂程度" class="headerlink" title="2.3 $f^*$ 的bias只取决于model的复杂程度"></a>2.3 $f^*$ 的bias只取决于model的复杂程度</h5><p>bias是说，我们把所有的$f^*$平均起来得到$E(f^*)=\overline{f^*}$，这个$\overline{f^*}$与真值$\widehat{f}$有多接近</p>
+<p>当然这里会有一个问题是说，总体的真值$\widehat{f}$我们根本就没有办法知道，因此这里只是假定了一个$\widehat{f}$</p>
+<p>下面的图示中，<strong>红色</strong>线条部分代表5000次实验分别得到的$f^*$，<strong>黑色</strong>线条部分代表真实值$\widehat{f}$，<strong>蓝色</strong>线条部分代表5000次实验得到的$f^*$的平均值$\overline{f}$</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE%EF%BC%88Error%EF%BC%89/5000-tests.png" style="width:60%;"></center>
+
+<p>根据上图我们发现，当model比较简单的时候，每次实验得到的$f^*$之间的variance会比较小，这些$f^*$会稳定在一个范围内，但是它们的平均值$\overline{f}$距离真实值$\widehat{f}$会有比较大的偏差；而当model比较复杂的时候，每次实验得到的$f^*$之间的variance会比较大，实际体现出来就是每次重新实验得到的$f^*$都会与之前得到的有较大差距，但是这些差距较大的$f^*$的平均值$\overline{f}$却和真实值$\widehat{f}$比较接近</p>
+<p>上图分别是含有一次项、三次项和五次项的model做了5000次实验后的结果，你会发现model越复杂，比如含有5次项的model那一幅图，每一次实验得到的$f^*$几乎是杂乱无章，遍布整幅图的；但是他们的平均值却和真实值$\widehat{f}$吻合的很好。也就是说，复杂的model，单次实验的结果是没有太大参考价值的，但是如果把考虑多次实验的结果的平均值，也许会对最终的结果有帮助</p>
+<p>注：这里的单次实验指的是，用一组training data训练出model的一组有效参数以构成$f^*$(每次独立实验使用的training data都是不同的)</p>
+<p><strong>因此：</strong></p>
+<ul>
+<li>如果是一个比较简单的model，那它有比较小的variance和比较大的bias。就像下图中左下角的打靶模型，每次实验的$f^*$都比较集中，但是他们平均起来距离靶心会有一段距离(比较适合实验次数少甚至只有单次实验的情况)</li>
+<li>如果是一个比较复杂的model，每次实验找出来的$f^*$都不一样，它有比较大的variance但是却有比较小的bias。就像下图中右下角的打靶模型，每次实验的$f^*$都比较分散，但是他们平均起来的位置与靶心比较接近(比较适合多次实验的情况)</li>
+</ul>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE%EF%BC%88Error%EF%BC%89/model-bias.png" style="width:60%;"></center>
+
+<h5 id="2-4-为什么会这样？"><a href="#2-4-为什么会这样？" class="headerlink" title="2.4 为什么会这样？"></a>2.4 为什么会这样？</h5><p>实际上我们的model就是一个function set，当你定好一个model的时候，实际上就已经定好这个function set的范围了，那个最好的function只能从这个function set里面挑出来</p>
+<p>如果是一个简单的model，它的function set的space是比较小的，这个范围可能根本就没有包含你的target；如果这个function set没有包含target，那么不管怎么sample，平均起来永远不可能是target(这里的space指上图中左下角那个被model圈起来的空间)</p>
+<p>如果这个model比较复杂，那么这个model所代表的function set的space是比较大的(简单的model实际上就是复杂model的子集)，那它就很有可能包含target，只是它没有办法找到那个target在哪，因为你给的training data不够，你给的training data每一次都不一样，所以他每一次找出来的$f^*$都不一样，但是如果他们是散布在这个target附近的，那平均起来，实际上就可以得到和target比较接近的位置(这里的space指上图中右下角那个被model圈起来的空间)</p>
+<h4 id="3-Bias-vs-Variance"><a href="#3-Bias-vs-Variance" class="headerlink" title="3. Bias vs Variance"></a>3. Bias vs Variance</h4><p>由前面的讨论可知，比较简单的model，variance比较小，bias比较大；而比较复杂的model，bias比较小，variance比较大</p>
+<h5 id="3-1-bias和variance对error的影响"><a href="#3-1-bias和variance对error的影响" class="headerlink" title="3.1 bias和variance对error的影响"></a>3.1 bias和variance对error的影响</h5><p>因此下图中(也就是之前我们得到的从最高项为一次项到五次项的五个model的error表现)，绿色的线代表variance造成的error，红色的线代表bias造成的error，蓝色的线代表这个model实际观测到的error</p>
+<p>$error_{实际}=error_{variance}+error_{bias}——蓝线为红线和绿线之和$</p>
+<p>可以发现，随着model的逐渐复杂：</p>
+<ul>
+<li>bias逐渐减小，bias所造成的error也逐渐下降，也就是打靶的时候瞄得越来越准，体现为图中的红线</li>
+<li>variance逐渐变大，variance所造成的error也逐渐增大，也就是虽然瞄得越来越准，但是每次射出去以后，你的误差是越来越大的，体现为图中的绿线</li>
+<li>当bias和variance这两项同时被考虑的时候，得到的就是图中的蓝线，也就是实际体现出来的error的变化；实际观测到的error先是减小然后又增大，因此实际error为最小值的那个点，即为bias和variance的error之和最小的点，就是表现最好的model</li>
+<li></li>
+<li>==<strong>如果实际error主要来自于variance很大，这个状况就是overfitting过拟合；如果实际error主要来自于bias很大，这个状况就是underfitting欠拟合</strong>==(可以理解为，overfitting就是过分地包围了靶心所在的space，而underfitting则是还未曾包围到靶心所在的space)</li>
+</ul>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE%EF%BC%88Error%EF%BC%89/bias-vs-variance.png" style="width:60%;"></center>
+
+<p>这就是为什么我们之前要先计算出每一个model对应的error(每一个model都有唯一对应的$f^*$，因此也有唯一对应的error)，再挑选error最小的model的原因，只有这样才能综合考虑bias和variance的影响，找到一个实际error最小的model</p>
+<h5 id="3-2-必须要知道自己的error主要来自于哪里"><a href="#3-2-必须要知道自己的error主要来自于哪里" class="headerlink" title="3.2 必须要知道自己的error主要来自于哪里"></a>3.2 必须要知道自己的error主要来自于哪里</h5><h6 id="1）你现在的问题是bias大，还是variance大？"><a href="#1）你现在的问题是bias大，还是variance大？" class="headerlink" title="1）你现在的问题是bias大，还是variance大？"></a>1）你现在的问题是bias大，还是variance大？</h6><p>当你自己在做research的时候，你必须要搞清楚，手头上的这个model，它目前主要的error是来源于哪里；你觉得你现在的问题是bias大，还是variance大</p>
+<p>你应该先知道这件事情，你才能知道你的future work，你要improve你的model的时候，你应该要走哪一个方向</p>
+<h6 id="2）那怎么知道现在是bias大还是variance大呢？"><a href="#2）那怎么知道现在是bias大还是variance大呢？" class="headerlink" title="2）那怎么知道现在是bias大还是variance大呢？"></a>2）那怎么知道现在是bias大还是variance大呢？</h6><ul>
+<li><p>如果model没有办法fit training data的examples，代表bias比较大，这时是underfitting</p>
+<p>  形象地说，就是该model找到的$f^*$上面并没有training data的大部分样本点，如下图中的linear model，我们只是example抽样了这几个蓝色的样本点，而这个model甚至没有fit这少数几个蓝色的样本点(这几个样本点没有在$f^*$上)，代表说这个model跟正确的model是有一段差距的，所以这个时候是bias大的情况，是underfitting</p>
+</li>
+<li><p>如果model可以fit training data，在training data上得到小的error，但是在testing data上，却得到一个大的error，代表variance比较大，这时是overfitting</p>
+</li>
+</ul>
+<h6 id="3）如何针对性地处理bias大-or-variance大的情况呢？"><a href="#3）如何针对性地处理bias大-or-variance大的情况呢？" class="headerlink" title="3）如何针对性地处理bias大 or variance大的情况呢？"></a>3）如何针对性地处理bias大 or variance大的情况呢？</h6><p>遇到bias大或variance大的时候，你其实是要用不同的方式来处理它们</p>
+<p>1、<strong>如果bias比较大</strong></p>
+<p>bias大代表，你现在这个model里面可能根本没有包含你的target，$\widehat{f}$可能根本就不在你的function set里</p>
+<p>对于error主要来自于bias的情况，是由于该model(function set)本来就不好，collect更多的data是没有用的，必须要从model本身出发</p>
+<ul>
+<li><p>redesign，重新设计你的model</p>
+<ul>
+<li><p>增加更多的features作为model的input输入变量</p>
+<p>  比如pokemon的例子里，只考虑进化前cp值可能不够，还要考虑hp值、species种类…作为model新的input变量</p>
+</li>
+<li><p>让model变得更复杂，增加高次项</p>
+<p>  比如原本只是linear model，现在考虑增加二次项、三次项…</p>
+</li>
+</ul>
+</li>
+</ul>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE%EF%BC%88Error%EF%BC%89/large-bias.png" style="width:60%;"></center>
+
+<p>2、<strong>如果variance比较大</strong></p>
+<ul>
+<li>增加data<ul>
+<li>如果是5次式，找100个$f^*$，每次实验我们只用10只宝可梦的数据训练model，那我们找出来的100个$f^*$的散布就会像下图一样杂乱无章；但如果每次实验我们用100只宝可梦的数据训练model，那我们找出来的100个$f^*$的分布就会像下图所示一样，非常地集中</li>
+<li>增加data是一个很有效控制variance的方法，假设你variance太大的话，collect data几乎是一个万能丹一样的东西，并且它不会伤害你的bias</li>
+<li>但是它存在一个很大的问题是，实际上并没有办法去collect更多的data</li>
+<li>如果没有办法collect更多的data，其实有一招，根据你对这个问题的理解，自己去generate更多“假的”data<ul>
+<li>比如手写数字识别，因为每个人手写数字的角度都不一样，那就把所有training data里面的数字都左转15°，右转15°</li>
+<li>比如做火车的影像辨识，只有从左边开过来的火车影像资料，没有从右边开过来的火车影像资料，该怎么办？实际上可以把每张图片都左右颠倒，就generate出右边的火车数据了，这样就多了一倍data出来</li>
+<li>比如做语音辨识的时候，只有男生说的“你好”，没有女生说的“你好”，那就用男生的声音用一个变声器把它转化一下，这样男女生的声音就可以互相转化，这样data就可以多出来</li>
+<li>比如现在你只有录音室里录下的声音，但是detection实际要在真实场景下使用的，那你就去真实场景下录一些噪音加到原本的声音里，就可以generate出符合条件的data了</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Regularization(正规化)<ul>
+<li>就是在loss function里面再加一个与model高次项系数相关的term，它会希望你的model里高次项的参数越小越好，也就是说希望你今天找出来的曲线越平滑越好；这个新加的term前面可以有一个weight，代表你希望你的曲线有多平滑</li>
+<li>下图中Regularization部分，左边第一幅图是没有加regularization的test；第二幅图是加了regularization后的情况，一些怪怪的、很不平滑的曲线就不会再出现，所有曲线都集中在比较平滑的区域；第三幅图是增加weight的情况，让曲线变得更平滑</li>
+<li>加了regularization以后，因为你强迫所有的曲线都要比较平滑，所以这个时候也会让你的variance变小；但regularization是可能会伤害bias的，因为它实际上调整了function set的space范围，变成它只包含那些比较平滑的曲线，这个缩小的space可能没有包含原先在更大space内的$\widehat{f}$，因此伤害了bias，所以当你做regularization的时候，需要调整regularization的weight，在variance和bias之间取得平衡</li>
+</ul>
+</li>
+</ul>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE%EF%BC%88Error%EF%BC%89/large-variance.png" style="width:60%;"></center>
+
+<p>注：variance比较大的case，加以图例解释如下：(假设这里我们无法获得更多的data)</p>
+<p>1、蓝色区域代表最初的情况，此时model比较复杂，function set的space范围比较大，包含了target靶心，但由于data不够，$f^*$比较分散，variance比较大</p>
+<p>2、红色区域代表进行regularization之后的情况，此时model的function set范围被缩小成只包含平滑的曲线，space减小，variance当然也跟着变小，但这个缩小后的space实际上并没有包含原先已经包含的target靶心，因此该model的bias变大</p>
+<p>3、橙色区域代表增大regularization的weight的情况，增大weight实际上就是放大function set的space，慢慢调整至包含target靶心，此时该model的bias变小，而相较于一开始的case，由于限定了曲线的平滑度(由weight控制平滑度的阈值)，该model的variance也比较小</p>
+<p>实际上，通过regularization优化model的过程就是上述的1、2、3步骤，不断地调整regularization的weight，使model的bias和variance达到一个最佳平衡的状态(可以通过error来评价状态的好坏，weight需要慢慢调参)</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE%EF%BC%88Error%EF%BC%89/regularization-illustration.png" style="width:60%;"></center>
+
+<h4 id="4-Model-Selection"><a href="#4-Model-Selection" class="headerlink" title="4. Model Selection"></a>4. Model Selection</h4><p>我们现在会遇到的问题往往是这样：我们有很多个model可以选择，还有很多参数可以调，比如regularization的weight，那通常我们是在bias和variance之间做一些trade-off权衡</p>
+<p>我们希望找一个model，它variance够小，bias也够小，这两个合起来给我们最小的testing data的error</p>
+<h5 id="但是以下这些事情，是你不应该做的："><a href="#但是以下这些事情，是你不应该做的：" class="headerlink" title="但是以下这些事情，是你不应该做的："></a>但是以下这些事情，是你不应该做的：</h5><p>你手上有training set，有testing set，接下来你想知道model1、model2、model3里面，应该选哪一个model，然后你就分别用这三个model去训练出$f_1^*,f_2^*,f_3^*$，然后把它apply到testing set上面，分别得到三个error为0.9，0.7，0.5，这里很直觉地会认为是model3最好</p>
+<p>但是现在可能的问题是，这个testing set是你自己手上的testing set，是你自己拿来衡量model好坏的testing set，真正的testing set是你没有的；注意到你自己手上的这笔testing set，它有自己的一个bias(这里的bias跟之前提到的略有不同，可以理解为自己的testing data跟实际的testing data会有一定的偏差存在)</p>
+<p>所以你今天那这个testing set来选择最好的model的时候，它在真正的testing set上不见得是最好的model，通常是比较差的，所以你实际得到的error是会大于你在自己的testing set上估测到的0.5</p>
+<p>以PM2.5预测为例，提供的数据分为training set，public testing set和private testing set三部分，其中public的testing set是供你测试自己的model的，private的testing data是你暂且未知的真正测试数据，现在你的model3在public testing set上的error为0.5，已经成功beat baseline，但是在private的testing set上，你的model3也许根本就没有beat the baseline，反而是model1和model2可能会表现地更好</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE%EF%BC%88Error%EF%BC%89/model-selection.png" style="width:60%;"></center>
+
+<h5 id="怎样做才是可靠的呢？"><a href="#怎样做才是可靠的呢？" class="headerlink" title="怎样做才是可靠的呢？"></a>怎样做才是可靠的呢？</h5><h6 id="training-data分成training-set和validation-set"><a href="#training-data分成training-set和validation-set" class="headerlink" title="training data分成training set和validation set"></a>training data分成training set和validation set</h6><p>你要做的事情是，把你的training set分成两组：</p>
+<ul>
+<li>一组是真正拿来training model的，叫做training set(训练集)</li>
+<li>另外一组不拿它来training model，而是拿它来选model，叫做validation set(验证集)</li>
+</ul>
+<p>==先在training set上找出每个model最好的function $f^*$，然后用validation set来选择你的model==</p>
+<p>也就是说，你手头上有3个model，你先把这3个model用training set训练出三个$f^*$，接下来看一下它们在validation set上的performance</p>
+<p>假设现在model3的performance最好，那你可以直接把这个model3的结果拿来apply在testing data上</p>
+<p>如果你担心现在把training set分成training和validation两部分，感觉training data变少的话，可以这样做：已经从validation决定model3是最好的model，那就定住model3不变(function的表达式不变)，然后用全部的data在model3上面再训练一次(使用全部的data去更新model3表达式的参数)</p>
+<p>这个时候，如果你把这个训练好的model的$f^*$apply到public testing set上面，你可能会得到一个大于0.5的error，虽然这么做，你得到的error表面上看起来是比较大的，但是<strong>这个时候你在public set上的error才能够真正反映你在private set上的error</strong></p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE%EF%BC%88Error%EF%BC%89/cross-validation.png" style="width:60%;"></center>
+
+<h6 id="考虑真实的测试集"><a href="#考虑真实的测试集" class="headerlink" title="考虑真实的测试集"></a>考虑真实的测试集</h6><p>实际上是这样一个关系：</p>
+<blockquote>
+<p>training data(训练集) -&gt; 自己的testing data(测试集) -&gt; 实际的testing data<br>(该流程没有考虑自己的testing data的bias)</p>
+<p>training set(部分训练集) -&gt; validation set(部分验证集) -&gt; 自己的testing data(测试集) -&gt; 实际的testing data<br>(该流程使用自己的testing data和validation来模拟testing data的bias误差，可以真实地反映出在实际的data上出现的error)</p>
+</blockquote>
+<h6 id="真正的error"><a href="#真正的error" class="headerlink" title="真正的error"></a>真正的error</h6><p>当你得到public set上的error的时候(尽管它可能会很大)，不建议回过头去重新调整model的参数，因为当你再回去重新调整什么东西的时候，你就又会把public testing set的bias给考虑进去了，这就又回到了第一种关系，即围绕着有偏差的testing data做model的优化</p>
+<p>这样的话此时你在public set上看到的performance就没有办法反映实际在private set上的performance了，因为你的model是针对public set做过优化的，虽然public set上的error数据看起来可能会更好看，但是针对实际未知的private set，这个“优化”带来的可能是反作用，反而会使实际的error变大</p>
+<p>当然，你也许几乎没有办法忍住不去做这件事情，在发paper的时候，有时候你会propose一个方法，那你要attach在benchmark的corpus，如果你在testing set上得到一个差的结果，你也几乎没有办法把持自己不回头去调一下你的model，你肯定不会只是写一个paper说这个方法不work这样子(滑稽</p>
+<p>因此这里只是说，你要keep in mind，如果在那个benchmark corpus上面所看到的testing的performance，它的error，肯定是大于它在real的application上应该有的值</p>
+<p>比如说你现在常常会听到说，在image lab的那个corpus上面，error rate都降到3%，那个是超越人类了，但是真的是这样子吗？已经有这么多人玩过这个corpus，已经有这么多人告诉你说前面这些方法都不work，他们都帮你挑过model了，你已经用“testing” data调过参数了，所以如果你把那些model真的apply到现实生活中，它的error rate肯定是大于3%的</p>
+<h6 id="如何划分training-set和validation-set？"><a href="#如何划分training-set和validation-set？" class="headerlink" title="如何划分training set和validation set？"></a>如何划分training set和validation set？</h6><p>那如果training set和validation set分坏了怎么办？如果validation也有怪怪的bias，岂不是对结果很不利？那你要做下面这件事情：</p>
+<p>==<strong>N-flod Cross Validation</strong>==</p>
+<p>如果你不相信某一次分train和validation的结果的话，那你就分很多种不同的样子</p>
+<p>比如说，如果你做3-flod的validation，意思就是你把training set分成三份，你每一次拿其中一份当做validation set，另外两份当training；分别在每个情境下都计算一下3个model的error，然后计算一下它的average error；然后你会发现在这三个情境下的average error，是model1最好</p>
+<p>然后接下来，你就把用整个完整的training data重新训练一遍model1的参数；然后再去testing data上test</p>
+<p>原则上是，如果你少去根据public testing set上的error调整model的话，那你在private testing set上面得到的error往往是比较接近public testing set上的error的</p>
+<p><center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/3-%E8%AF%AF%E5%B7%AE%EF%BC%88Error%EF%BC%89/n-flod-cross-validation.png" style="width:60%;"></center></p>
+<h4 id="5-总结conclusion"><a href="#5-总结conclusion" class="headerlink" title="5. 总结conclusion"></a>5. 总结conclusion</h4><p>1、一般来说，error是bias和variance共同作用的结果</p>
+<p>2、model比较简单和比较复杂的情况：</p>
+<ul>
+<li>当model比较简单的时候，variance比较小，bias比较大，此时$f^*$会比较集中，但是function set可能并没有包含真实值$\widehat{f}$；此时model受bias影响较大</li>
+<li>当model比较复杂的时候，bias比较小，variance比较大，此时function set会包含真实值$\widehat{f}$，但是$f^*$会比较分散；此时model受variance影响较大</li>
+</ul>
+<p>3、区分bias大 or variance大的情况</p>
+<ul>
+<li><p>如果连采样的样本点都没有大部分在model训练出来的$f^*$上，说明这个model太简单，bias比较大，是欠拟合</p>
+</li>
+<li><p>如果样本点基本都在model训练出来的$f^*$上，但是testing data上测试得到的error很大，说明这个model太复杂，variance比较大，是过拟合</p>
+</li>
+</ul>
+<p>4、bias大 or variance大的情况下该如何处理</p>
+<ul>
+<li><p>当bias比较大时，需要做的是重新设计model，包括考虑添加新的input变量，考虑给model添加高次项；然后对每一个model对应的$f^*$计算出error，选择error值最小的model(随model变复杂，bias会减小，variance会增加，因此这里分别计算error，取两者平衡点)</p>
+</li>
+<li><p>当variance比较大时，一个很好的办法是增加data(可以凭借经验自己generate data)，当data数量足够时，得到的$f^*$实际上是比较集中的；如果现实中没有办法collect更多的data，那么就采用regularization正规化的方法，以曲线的平滑度为条件控制function set的范围，用weight控制平滑度阈值，使得最终的model既包含$\widehat{f}$，variance又不会太大</p>
+</li>
+</ul>
+<p>5、如何选择model</p>
+<ul>
+<li>选择model的时候呢，我们手头上的testing data与真实的testing data之间是存在偏差的，因此我们要将training data分成training set和validation set两部分，经过validation挑选出来的model再用全部的training data训练一遍参数，最后用testing data去测试error，这样得到的error是模拟过testing bias的error，与实际情况下的error会比较符合</li>
+</ul>
+]]></content>
+      <categories>
+        <category>机器学习</category>
+        <category>“有手就行”系列</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>加密流量识别评价常用指标</title>
+    <url>/%E7%BD%91%E7%BB%9C%E6%B5%8B%E9%87%8F%E4%B8%8E%E8%A1%8C%E4%B8%BA%E5%88%86%E6%9E%90/%E5%8A%A0%E5%AF%86%E6%B5%81%E9%87%8F%E8%AF%86%E5%88%AB%E8%AF%84%E4%BB%B7%E5%B8%B8%E7%94%A8%E6%8C%87%E6%A0%87/</url>
+    <content><![CDATA[<h4 id="1-TP、FP、TN、FN"><a href="#1-TP、FP、TN、FN" class="headerlink" title="1. TP、FP、TN、FN"></a>1. TP、FP、TN、FN</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>二类</th>
+<th>多类</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TP</td>
+<td>正例预测为正例</td>
+<td>将属于某分类的加密流量识别为该分类</td>
+</tr>
+<tr>
+<td>FP</td>
+<td>负例预测为正例</td>
+<td>将不属于某分类的加密流量识别为该分类</td>
+</tr>
+<tr>
+<td>TN</td>
+<td>负例预测为负例</td>
+<td>将不属于某分类的加密流量识别为非该分类</td>
+</tr>
+<tr>
+<td>FN</td>
+<td>正例预测为负例</td>
+<td>将属于某分类的加密流量识别为其他分类</td>
+</tr>
+</tbody>
+</table>
+</div>
+<a id="more"></a>
+<p>假设：$N$ 为加密流量分类类型数，即加密流量由 $N$ 类流量构成；$m_{ij}$ 表示实际类型为 $i$ 的应用被识别为类型为 $j$ 的样本数。则：</p>
+<ul>
+<li>$TP_i=m_{ii}$，真报第 $i$ 类的加密流量</li>
+<li>$FP_i=\sum_{j \ne i} m_{jj}$，误报为第 $i$ 类的加密流量</li>
+<li>$TN_i=m_{jj}$，将非第 $i$ 类的加密流量报为非第i类</li>
+<li>$FN_i=\Sigma m_{ij}$，漏报第 $i$ 类的加密流量</li>
+</ul>
+<h4 id="2-基于-TP、FP、TN、FN-的评价指标定义"><a href="#2-基于-TP、FP、TN、FN-的评价指标定义" class="headerlink" title="2. 基于 TP、FP、TN、FN 的评价指标定义"></a>2. 基于 TP、FP、TN、FN 的评价指标定义</h4><h5 id="1）误报率："><a href="#1）误报率：" class="headerlink" title="1）误报率："></a>1）误报率：</h5><script type="math/tex; mode=display">
+FPR_i=\frac{FP_i}{FP_i+TP_i+FN_i}</script><h5 id="2）精确率："><a href="#2）精确率：" class="headerlink" title="2）精确率："></a>2）精确率：</h5><script type="math/tex; mode=display">
+PR_i=\frac{TP_i}{TP_i+FP_i}</script><h5 id="3）召回率："><a href="#3）召回率：" class="headerlink" title="3）召回率："></a>3）召回率：</h5><script type="math/tex; mode=display">
+REC_i=\frac{TP_i}{TP_i+FN_i}</script><h5 id="4）总体准确率："><a href="#4）总体准确率：" class="headerlink" title="4）总体准确率："></a>4）总体准确率：</h5><script type="math/tex; mode=display">
+Accuracy=\frac{\sum_{i=1}^{N}(TP_i+TN_i)}{\sum_{i=1}^{N}(TP_i+TN_i+FP_i+FN_i)}</script><h5 id="5）F-值："><a href="#5）F-值：" class="headerlink" title="5）F 值："></a>5）F 值：</h5><script type="math/tex; mode=display">
+FMEA_i=\frac{2PR_i*REC_i}{PR_i+REC_i}</script><h5 id="6）完整性："><a href="#6）完整性：" class="headerlink" title="6）完整性："></a>6）完整性：</h5><script type="math/tex; mode=display">
+COMP_i=\frac{REC_i}{PR_i}</script><p>误报率、精确率和召回率反映了网络加密流量识别方法在每类流量数据上的识别效果；总体准确率是网络流量识别方法的总体识别性能评价指标；F值是均衡精确率和召回率获得的综合评价指标；完整性体现了网络加密流量识别方法的识别覆盖率。好的网络加密流量识别方法应该同时具有较低的误报率，较高的总体准确率、精确率、召回率、F值和完整性。</p>
+]]></content>
+      <categories>
+        <category>网络测量与行为分析</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
+        <tag>流量识别</tag>
+        <tag>流量分类</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2-回归（Regression）</title>
+    <url>/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/</url>
+    <content><![CDATA[<p>Regression 就是找到一个函数 function，通过输入特征 x，输出一个数值 Scalar。</p>
+<a id="more"></a>
+<h1 id="1-回归模型"><a href="#1-回归模型" class="headerlink" title="1. 回归模型"></a>1. 回归模型</h1><h2 id="1-1-回归定义"><a href="#1-1-回归定义" class="headerlink" title="1.1 回归定义"></a>1.1 回归定义</h2><p>Regression 就是找到一个函数 function ，通过输入特征 x，输出一个数值 Scalar。</p>
+<h2 id="1-2-应用举例"><a href="#1-2-应用举例" class="headerlink" title="1.2 应用举例"></a>1.2 应用举例</h2><ul>
+<li>股市预测（Stock market forecast）<ul>
+<li>输入：过去10年股票的变动、新闻咨询、公司并购咨询等</li>
+<li>输出：预测股市明天的平均值</li>
+</ul>
+</li>
+<li>自动驾驶（Self-driving Car）<ul>
+<li>输入：无人车上的各个sensor的数据，例如路况、测出的车距等</li>
+<li>输出：方向盘的角度</li>
+</ul>
+</li>
+<li>商品推荐（Recommendation）<ul>
+<li>输入：商品A的特性，商品B的特性</li>
+<li>输出：购买商品B的可能性</li>
+</ul>
+</li>
+<li>Pokemon精灵攻击力预测（Combat Power of a pokemon）：<ul>
+<li>输入：进化前的CP值、物种（Bulbasaur）、血量（HP）、重量（Weight）、高度（Height）</li>
+<li>输出：进化后的CP值</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-3-模型步骤"><a href="#1-3-模型步骤" class="headerlink" title="1.3 模型步骤"></a>1.3 模型步骤</h2><ul>
+<li>step1：模型假设，选择模型框架（线性模型）</li>
+<li>step2：模型评估，如何判断众多模型的好坏（损失函数）</li>
+<li>step3：模型优化，如何筛选最优的模型（梯度下降）</li>
+</ul>
+<h1 id="2-以预测宝可梦的-CP-值为例"><a href="#2-以预测宝可梦的-CP-值为例" class="headerlink" title="2. 以预测宝可梦的 CP 值为例"></a>2. 以预测宝可梦的 CP 值为例</h1><p>我们期望根据已有的宝可梦进化前后的信息，来预测某只宝可梦进化后的cp值的大小</p>
+<h2 id="2-1-确定-Senario、Task-和-Model"><a href="#2-1-确定-Senario、Task-和-Model" class="headerlink" title="2.1 确定 Senario、Task 和 Model"></a>2.1 确定 Senario、Task 和 Model</h2><p><strong>Senario</strong></p>
+<p>首先根据已有的data来确定Senario，我们拥有宝可梦进化前后cp值的这样一笔数据，input是进化前的宝可梦(包括它的各种属性)，output是进化后的宝可梦的cp值；因此我们的data是labeled，使用的Senario是Supervised Learning</p>
+<p><strong>Task</strong></p>
+<p>然后根据我们想要function的输出类型来确定Task，我们预期得到的是宝可梦进化后的cp值，是一个scalar，因此使用的Task是Regression</p>
+<p><strong>Model</strong></p>
+<p>关于Model，选择很多，这里采用的是Non-linear Model</p>
+<h2 id="2-2-设定具体参数"><a href="#2-2-设定具体参数" class="headerlink" title="2.2 设定具体参数"></a>2.2 设定具体参数</h2><p>$X$：表示一只宝可梦，用下标表示该宝可梦的某种属性<br>$X_{cp}$：表示该宝可梦进化前的cp值<br>$X_s$：表示该宝可梦是属于哪一种物种，比如妙瓜种子、皮卡丘…<br>$X_{hp}$：表示该宝可梦的hp值即生命值是多少<br>$X_w$：代表该宝可梦的重重量<br>$X_h$：代表该宝可梦的高度<br>$f()$：表示我们要找的 function<br>$y$：表示 function 的 output，即宝可梦进化后的 cp 值，是一个标量（scalar）</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/pokeman-parameters.png" alt="pokeman-parameters" style="width:60%;"></center>
+
+<h2 id="2-3-具体过程"><a href="#2-3-具体过程" class="headerlink" title="2.3 具体过程"></a>2.3 具体过程</h2><p><strong>回顾一下 machine Learning 的三个步骤：</strong></p>
+<ul>
+<li>定义一个 model 即 function set</li>
+<li>定义一个 goodness of function 损失函数去评估该 function 的好坏</li>
+<li>找一个最好的 function</li>
+</ul>
+<h3 id="2-3-1-Step1：模型选择（Model）"><a href="#2-3-1-Step1：模型选择（Model）" class="headerlink" title="2.3.1 Step1：模型选择（Model）"></a>2.3.1 Step1：模型选择（Model）</h3><p>如何选择一个 function 的模型呢？毕竟只有确定了模型才能调参。这里没有明确的思路，只能凭经验去一种种地试</p>
+<h4 id="Linear-Model-线性模型"><a href="#Linear-Model-线性模型" class="headerlink" title="Linear Model 线性模型"></a>Linear Model 线性模型</h4><script type="math/tex; mode=display">
+y=b+w \cdot X_{cp}</script><p>$y$ 代表进化后的cp值，$X_{cp}$ 代表进化前的 cp 值，$w$ 和 $b$ 代表未知参数，可以是任何数值。</p>
+<p>根据不同的 $w$ 和 $b$，可以确定不同的无穷无尽的 function，而 $y=b+w \cdot X_{cp}$ 这个抽象出来的式子就叫做 model，是以上这些具体化的 function 的集合，即 function set。</p>
+<p>上述提到的实际上是一种<strong>Linear Model</strong>，但只考虑了宝可梦进化前的 cp 值，而宝可梦还有更多的特征，因此我们可以将其扩展为：</p>
+<script type="math/tex; mode=display">
+y=b+\sum w_ix_i</script><p>其中：<br><strong>$x_i$</strong>： an attribute of input X  ( $x_i$ 也被称作 feature，即特征值)<br><strong>$w_i$</strong>：$x_i$ 的权重<br><strong>$b$</strong>：bias（偏置）</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/model.png" alt="model" style="width:60%;"></center>
+
+<h3 id="2-3-2-Step2：模型评估（-Goodness-of-function）"><a href="#2-3-2-Step2：模型评估（-Goodness-of-function）" class="headerlink" title="2.3.2 Step2：模型评估（ Goodness of function）"></a>2.3.2 Step2：模型评估（ Goodness of function）</h3><h4 id="1-参数说明"><a href="#1-参数说明" class="headerlink" title="1) 参数说明"></a>1) 参数说明</h4><p>$x^i$：用上标来表示一个完整的 object 的编号，$x^{i}$表示第 i 只宝可梦(下标表示该 object 中的 component)<br>$\widehat{y}^i$：用$\widehat{y}$表示一个实际观察到的object输出，上标为i表示是第i个object</p>
+<p>注：由于regression的输出值是scalar，因此$\widehat{y}$里面并没有component，只是一个简单的数值；但是未来如果考虑structured Learning的时候，我们output的object可能是有structured的，所以我们还是会需要用上标下标来表示一个完整的output的object和它包含的component</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/goodness-of-function.png" alt="goodness-of-function" style="width:60%;"></center>
+
+<h4 id="2-损失函数（Loss-function）"><a href="#2-损失函数（Loss-function）" class="headerlink" title="2) 损失函数（Loss function）"></a>2) 损失函数（Loss function）</h4><p>为了衡量function set中的某个function的好坏，我们需要一个评估函数，即 <strong>Loss function</strong>，损失函数，简称<code>L</code>；<code>loss function</code>是一个 function 的 function：</p>
+<script type="math/tex; mode=display">
+L(f)=L(w,b)</script><p>input：a function；<br>output：how bad/good it is</p>
+<p>由于 $f:y=b+w \cdot x_{cp}$，即 $f$ 是由 $w$ 和 $b$ 决定的，因此输入 $f$ 就等价于输入这个 $f$ 里的 $w$ 和$b$ ，因此<strong>Loss function实际上是在衡量一组参数的好坏</strong>。</p>
+<p>之前提到的model是由我们自主选择的，这里的 loss function 也是，最常用的方法就是采用类似于方差和的形式来衡量参数的好坏，即预测值与真值差的平方和；这里真正的数值减估测数值的平方，叫做估测误差（Estimation error），将10个估测误差合起来就是 loss function</p>
+<script type="math/tex; mode=display">
+L(f)=L(w,b)=\sum_{n=1}^{10}(\widehat{y}^n-(b+w \cdot {x}^n_{cp}))^2</script><p>如果 $L(f)$ 越大，说明该 function 表现得越不好；$L(f)$ 越小，说明该 function 表现得越好</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/loss-function.png" alt="loss-function" style="width:60%;"></center>
+
+<p><strong>Loss function可视化</strong></p>
+<p>下图中是loss function的可视化，该图中的每一个点都代表一组 $(w,b)$，也就是对应着一个<code>function</code>；而该点的颜色对应着的loss function的结果 $L(w,b)$，它表示该点对应 function 的表现有多糟糕，颜色越偏红色代表 Loss 的数值越大，这个 function 的表现越不好，越偏蓝色代表 Loss 的数值越小，这个 function 的表现越好。</p>
+<p>比如图中用红色箭头标注的点就代表了 $b=-180 , w=-2$ 对应的 function，即 $y=-180-2 \cdot x_{cp}$，该点所在的颜色偏向于红色区域，因此这个 function 的 loss 比较大，表现并不好。</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/loss-figure.png" alt="loss-figure" style="width:60%;"></center>
+
+<h3 id="2-3-3-Step3：最佳模型（Pick-the-Best-Function）"><a href="#2-3-3-Step3：最佳模型（Pick-the-Best-Function）" class="headerlink" title="2.3.3 Step3：最佳模型（Pick the Best Function）"></a>2.3.3 Step3：最佳模型（Pick the Best Function）</h3><p>我们已经确定了loss function，他可以衡量我们的model里面每一个function的好坏，接下来我们要做的事情就是，从这个function set里面，挑选一个最好的function。</p>
+<p>挑选最好的function这一件事情，写成formulation/equation的样子如下：</p>
+<script type="math/tex; mode=display">
+f^*={arg} \underset{f}{min} L(f)</script><p>或者是</p>
+<script type="math/tex; mode=display">
+w^*,b^*={arg}\ \underset{w,b}{min} L(w,b)={arg}\  \underset{w,b}{min} \sum\limits^{10}_{n=1}(\widehat{y}^n-(b+w \cdot x^n_{cp}))^2</script><p>也就是那个使 $L(f)=L(w,b)=Loss$ 最小的 $f$ 或 $(w,b)$，就是我们要找的 $f^<em>$ 或 $(w^</em>,b^*)$（有点像极大似然估计的思想）</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/best-function.png" alt="best-function" style="width:60%;"></center>
+
+<p>利用线性代数的知识，可以解得这个 closed-form solution，但这里采用的是一种更为普遍的方法：<strong>梯度下降法(Gradient descent)</strong></p>
+<h1 id="3-梯度下降（Gradient-Descent）"><a href="#3-梯度下降（Gradient-Descent）" class="headerlink" title="3. 梯度下降（Gradient Descent）"></a>3. 梯度下降（Gradient Descent）</h1><p>上面的例子比较简单，用线性代数的知识就可以解；但是对于更普遍的问题来说，<strong>gradient descent 的厉害之处在于，只要 $L(f)$ 是可微分的，gradient descent都可以拿来处理这个 $f$，找到表现比较好的 parameters</strong></p>
+<h2 id="3-1-单个参数的问题"><a href="#3-1-单个参数的问题" class="headerlink" title="3.1 单个参数的问题"></a>3.1 单个参数的问题</h2><p>以只带单个参数 $w$ 的Loss Function $L(w)$ 为例，首先保证 $L(w)$ 是<strong>可微</strong>的：</p>
+<script type="math/tex; mode=display">
+w^*={arg}\ \underset{w}{min} L(w)</script><p>我们的目标就是找到这个使 Loss 最小的 $w^*$，实际上就是寻找切线 L 斜率为 0 的 global minima 最小值点(注意，存在一些 local minima 极小值点，其斜率也是 0)</p>
+<p>有一个暴力的方法是，穷举所有的 $w$ 值，去找到使 loss 最小的 $w^*$，但是这样做是没有效率的；而 gradient descent 就是用来解决这个效率问题的，梯度下降法的过程如下：</p>
+<ul>
+<li><p>首先随机选取一个初始的点 $w^0$ (当然也不一定要随机选取，如果有办法可以得到比较接近 $w^*$ 的表现得比较好的 $w^0$ 当初始点，可以有效地提高查找 $w^*$ 的效率)</p>
+</li>
+<li><p>计算 $L$ 在 $w=w^0$ 的位置的微分，即 $\frac{dL}{dw}|_{w=w^0}$，几何意义就是切线的斜率</p>
+</li>
+<li><p>如果切线斜率是负的（negative），那么就应该使 $w$ 变大，即往右踏一步；如果切线斜率是正的（positive），那么就应该使 $w$ 变小，即往左踏一步，每一步的步长 step size 就是  $w$ 的改变量</p>
+<p>  $w$ 的改变量 step size 的大小取决于两件事：</p>
+<ul>
+<li><p>一是现在的微分值 $\frac{dL}{dw}$ 有多大，微分值越大代表现在在一个越陡峭的地方，那它要移动的距离就越大，反之就越小；</p>
+</li>
+<li><p>二是一个常数项 $η$，被称为<strong>学习率</strong>（learning rate），它决定了每次踏出的 step size 不只取决于现在的斜率，还取决于一个事先就定好的数值，如果 learning rate 比较大，那每踏出一步的时候，参数 $w$ 更新的幅度就比较大，反之参数更新的幅度就比较小<br>  如果 learning rate 设置的大一些，那机器学习的速度就会比较快；但是 learning rate 如果太大，可能就会跳过最合适的 global minima 的点</p>
+</li>
+</ul>
+</li>
+<li><p>因此每次参数更新的大小是 $η \frac{dL}{dw}$，为了满足斜率为负时 $w$ 变大，斜率为正时 $w$ 变小，应当使原来的 $w$ 减去更新的数值，即</p>
+<script type="math/tex; mode=display">
+w^1=w^0-η \frac{dL}{dw}|_{w=w^0} \\
+w^2=w^1-η \frac{dL}{dw}|_{w=w^1} \\
+w^3=w^2-η \frac{dL}{dw}|_{w=w^2} \\
+... \\
+w^{i+1}=w^i-η \frac{dL}{dw}|_{w=w^i} \\
+if\ \ (\frac{dL}{dw}|_{w=w^i}==0) \ \ then \ \ stop; \\</script></li>
+<li><p>此时$w^i$对应的斜率为0，我们找到了一个极小值local minima，这就出现了一个问题，当微分为0的时候，参数就会一直卡在这个点上没有办法再更新了，因此通过gradient descent找出来的solution其实并不是最佳解global minima。但幸运的是，在linear regression上，是没有local minima的，因此可以使用这个方法</p>
+</li>
+</ul>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/gradient-descent.png" alt="gradient-descent" style="width:60%;"></center>
+
+<h2 id="3-2-两个参数的问题"><a href="#3-2-两个参数的问题" class="headerlink" title="3.2 两个参数的问题"></a>3.2 两个参数的问题</h2><p>今天要解决的关于宝可梦的问题，是含有two parameters的问题，即$(w^<em>,b^</em>)=arg\ \underset{w,b} {min} L(w,b)$</p>
+<p>当然，它本质上处理单个参数的问题是一样的</p>
+<ul>
+<li><p>首先，也是随机选取两个初始值，$w^0$和$b^0$</p>
+</li>
+<li><p>然后分别计算 $(w^0,b^0)$ 这个点上，$L$ 对 $w$ 和 $b$ 的偏微分，即 $\frac{\partial L}{\partial w}|_{w=w^0,b=b^0}$ 和 $\frac{\partial L}{\partial b}|_{w=w^0,b=b^0}$</p>
+</li>
+<li><p>更新参数，当迭代跳出时，$(w^i,b^i)$ 对应着极小值点</p>
+<script type="math/tex; mode=display">
+  w^1=w^0-η\frac{\partial L}{\partial w}|_{w=w^0,b=b^0} \ \ \ \ \ \ \ \  \ b^1=b^0-η\frac{\partial L}{\partial b}|_{w=w^0,b=b^0} \\
+  w^2=w^1-η\frac{\partial L}{\partial w}|_{w=w^1,b=b^1} \ \ \ \ \ \ \ \  \ b^2=b^1-η\frac{\partial L}{\partial b}|_{w=w^1,b=b^1} \\
+  ... \\
+  w^{i+1}=w^{i}-η\frac{\partial L}{\partial w}|_{w=w^{i},b=b^{i}} \ \ \ \ \ \ \ \  \ b^{i+1}=b^{i}-η\frac{\partial L}{\partial b}|_{w=w^{i},b=b^{i}} \\
+  if(\frac{\partial L}{\partial w}==0 \&\& \frac{\partial L}{\partial b}==0) \ \ \ then \ \ stop</script></li>
+</ul>
+<p>实际上，$L$ 的 gradient 就是微积分中的那个梯度的概念，即</p>
+<script type="math/tex; mode=display">
+\nabla L=
+\begin{bmatrix}
+\frac{\partial L}{\partial w} \\
+\frac{\partial L}{\partial b}
+\end{bmatrix}_{gradient}</script><p>可视化效果如下：(三维坐标显示在二维图像中，loss的值用颜色来表示)</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/gradient-two-parameters.png" alt="gradient-two-parameters" style="width: 60%;"></center>
+
+<p>横坐标是b，纵坐标是w，颜色代表loss的值，越偏蓝色表示loss越小，越偏红色表示loss越大</p>
+<p><strong>每次计算得到的梯度 gradient，即由 $\frac{\partial L}{\partial b}$ 和 $\frac{\partial L}{\partial w}$ 组成的 vector 向量，就是该等高线的法线方向(对应图中红色箭头的反方向)；而 $(-η\frac{\partial L}{\partial b},-η\frac{\partial L}{\partial w})$ 的作用就是让原先的 $(w^i,b^i)$ 朝着 gradient 的反方向即等高线法线方向前进，其中学习率 $η$ 的作用是每次更新的跨度(对应图中红色箭头的长度)；经过多次迭代，最终 gradient 达到极小值点</strong></p>
+<p>注：这里两个方向的学习率 $η$ 必须保持一致，这样每次更新坐标的 step size 是等比例缩放的，保证坐标前进的方向始终和梯度下降的方向一致；否则坐标前进的方向将会发生偏移</p>
+<h2 id="3-3-梯度下降的缺点"><a href="#3-3-梯度下降的缺点" class="headerlink" title="3.3 梯度下降的缺点"></a>3.3 梯度下降的缺点</h2><p>gradient descent 有一个令人担心的地方，也就是我之前一直提到的，它每次迭代完毕，寻找到的梯度为 0 的点必然是极小值点，local minima；却不一定是最小值点，global minima</p>
+<p>这会造成一个问题是说，如果 loss function 长得比较坑坑洼洼(极小值点比较多)，而每次初始化 $w^0$ 的取值又是随机的，这会造成每次 gradient descent 停下来的位置都可能是不同的极小值点；而且当遇到梯度比较平缓 (gradient≈0) 的时候，gradient descent 也可能会效率低下甚至可能会卡住；也就是说通过这个方法得到的结果，是看人品的。</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/gradient-stuck.png" alt="gradient-stuck" style="width:60%;"></center>
+
+<p>但是！在<strong>线性回归</strong>中，损失函数实际上是一个<strong>凸函数</strong>（convex），是没有局部最优解的，它只有一个 global minima，visualize 出来的图像就是从里到外一圈一圈包围起来的椭圆形的等高线(就像前面的等高线图)，因此随便选一个起始点，根据 gradient descent 最终找出来的，都会是同一组参数。</p>
+<h1 id="4-计算pokemon的梯度"><a href="#4-计算pokemon的梯度" class="headerlink" title="4. 计算pokemon的梯度"></a>4. 计算pokemon的梯度</h1><h2 id="4-1-偏微分的计算"><a href="#4-1-偏微分的计算" class="headerlink" title="4.1 偏微分的计算"></a>4.1 偏微分的计算</h2><p>现在我们来求具体的 $L$ 对 $w$ 和 $b$ 的偏微分</p>
+<script type="math/tex; mode=display">
+L(w,b)=\sum\limits_{n=1}^{10}(\widehat{y}^n-(b+w\cdot x_{cp}^n))^2 \\
+\frac{\partial L}{\partial w}=\sum\limits_{n=1}^{10}2(\widehat{y}^n-(b+w\cdot x_{cp}^n))(-x_{cp}^n) \\
+\frac{\partial L}{\partial b}=\sum\limits_{n=1}^{10}2(\widehat{y}^n-(b+w\cdot x_{cp}^n))(-1)</script><p>根据 gradient descent，我们得到的 $y=b+w\cdot x_{cp}$ 中最好的参数是 $b=-188.4, w=2.7$</p>
+<p>我们需要有一套评估系统来评价我们得到的最后这个 function 和实际值的误差 error 的大小；这里我们将 training data 里每一只宝可梦 $i$ 进化后的实际 cp 值与预测值之差的绝对值叫做 $e^i$，而这些误差之和 Average Error on Training Data 为 $\sum\limits_{i=1}^{10}e^i=31.9$</p>
+<blockquote>
+<p>What we really care about is the error on new data (testing data)</p>
+</blockquote>
+<p>当然我们真正关心的是 generalization 的case，也就是用这个 model 去估测新抓到的 pokemon，误差会有多少，这也就是所谓的 testing data 的误差；于是又抓了 10 只新的 pokemon，算出来的Average Error on Testing Data 为 $\sum\limits_{i=1}^{10}e^i=35.0$；可见 training data 里得到的误差一般是要比 testing data 要小，这也符合常识</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/results.png" alt="results" style="width:60%;"></center>
+
+<h2 id="4-2-How-can-we-do-better"><a href="#4-2-How-can-we-do-better" class="headerlink" title="4.2 How can we do better?"></a>4.2 How can we do better?</h2><p>我们有没有办法做得更好呢？这时就需要我们重新去设计 model；如果仔细观察一下上图的 data，就会发现在原先的 cp 值比较大和比较小的地方，预测值是相当不准的</p>
+<p>实际上，从结果来看，最终的function可能不是一条直线，可能是稍微更复杂一点的曲线</p>
+<h3 id="考虑-x-cp-2-的model"><a href="#考虑-x-cp-2-的model" class="headerlink" title="考虑$(x_{cp})^2$的model"></a>考虑$(x_{cp})^2$的model</h3><center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/Xcp-2.png" alt="Xcp-2" style="width:50%;"></center>
+
+<h3 id="考虑-x-cp-3-的model"><a href="#考虑-x-cp-3-的model" class="headerlink" title="考虑$(x_{cp})^3$的model"></a>考虑$(x_{cp})^3$的model</h3><center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/Xcp-3.png" alt="Xcp-3" style="width:50%;"></center>
+
+<h3 id="考虑-x-cp-4-的model"><a href="#考虑-x-cp-4-的model" class="headerlink" title="考虑$(x_{cp})^4$的model"></a>考虑$(x_{cp})^4$的model</h3><center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/Xcp-4.png" alt="Xcp-4" style="width:50%;"></center>
+
+<h3 id="考虑-x-cp-5-的model"><a href="#考虑-x-cp-5-的model" class="headerlink" title="考虑$(x_{cp})^5$的model"></a>考虑$(x_{cp})^5$的model</h3><center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/Xcp-5.png" alt="Xcp-5" style="width:50%;"></center>
+
+<h3 id="5个model的对比"><a href="#5个model的对比" class="headerlink" title="5个model的对比"></a>5个model的对比</h3><p>这 5 个模型的 training data 的表现：随着 $(x_{cp})^i$ 的高次项的增加，对应的 average error 会不断地减小；实际上这件事情非常容易解释，实际上低次的式子是高次的式子的特殊情况（令高次项 $(x_{cp})^i$ 对应的 $w_i$ 为0，高次式就转化成低次式）</p>
+<p>也就是说，在gradient descent可以找到best function的前提下（多次式为Non-linear model，存在local optimal局部最优解，gradient descent不一定能找到global minima），function所包含的项的次数越高，越复杂，error 在 training data上 的表现就会越来越小；但是，我们关心的不是 model 在 training data 上的 error 表现，而是 model 在 testing data 上的 error 表现</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/Xcp-compare.png" alt="compare" style="width:60%;"></center>
+
+<p>在 training data 上，model 越复杂，error 就会越低；但是在 testing data 上，model 复杂到一定程度之后，error 非但不会减小，反而会暴增，在该例中，从含有 $(X_{cp})^4$ 项的 model 开始往后的 model，testing data 上的 error 出现了大幅增长的现象，通常被称为<strong>过拟合</strong>（Overfitting）</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/Xcp-overfitting.png" alt="overfitting" style="width:60%;"></center>
+
+<p>因此 model 不是越复杂越好，而是选择一个最适合的 model，在本例中，包含 $(X_{cp})^3$ 的式子是最适合的 model。</p>
+<h2 id="4-3-进一步讨论其他参数"><a href="#4-3-进一步讨论其他参数" class="headerlink" title="4.3 进一步讨论其他参数"></a>4.3 进一步讨论其他参数</h2><h3 id="物种-x-s-的影响"><a href="#物种-x-s-的影响" class="headerlink" title="物种 $x_s$ 的影响"></a>物种 $x_s$ 的影响</h3><p>之前我们的model只考虑了宝可梦进化前的 cp 值，这显然是不对的，除了 cp 值外，还受到物种 $x_s$ 的影响</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/hidden-factors.png" alt="hidden-factors" style="width:60%;"></center>
+
+<p>因此我们重新设计model：</p>
+<script type="math/tex; mode=display">
+if \ \ x_s=Pidgey: \ \ \ \ \ \ \ y=b_1+w_1\cdot x_{cp} \\
+if \ \ x_s=Weedle: \ \ \ \ \ \ y=b_2+w_2\cdot x_{cp} \\
+if \ \ x_s=Caterpie: \ \ \ \ y=b_3+w_3\cdot x_{cp} \\
+if \ \ x_s=Eevee: \ \ \ \ \ \ \ \ \ y=b_4+w_4\cdot x_{cp}</script><p>也就是根据不同的物种，设计不同的 linear model（这里 $x_s=species \ of \ x$），那如何将上面的四个 if 语句合并成一个 linear model 呢？</p>
+<p>这里引入 $δ(条件表达式)$ 的概念，当条件表达式为 true，则 δ 为 1；当条件表达式为 false，则 δ 为 0，因此可以通过下图的方式，将 4 个 if 语句转化成同一个 linear model</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/new-model.png" alt="new-model" style="width:60%;"></center>
+
+<p>有了上面这个 model 以后，我们分别得到了在 training data 和 testing data 上测试的结果：</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/new-results.png" alt="new-results" style="width:60%;"></center>
+
+<h3 id="Hp值-x-hp-、height-值-x-h-、weight-值-x-w-的影响"><a href="#Hp值-x-hp-、height-值-x-h-、weight-值-x-w-的影响" class="headerlink" title="Hp值 $x_{hp}$、height 值 $x_h$、weight 值 $x_w$ 的影响"></a>Hp值 $x_{hp}$、height 值 $x_h$、weight 值 $x_w$ 的影响</h3><p>考虑所有可能有影响的参数，设计出这个最复杂的 model：</p>
+<script type="math/tex; mode=display">
+if \ \ x_s=Pidgey: \ \  \ \ y'=b_1+w_1\cdot x_{cp}+w_5\cdot(x_{cp})^2 \\
+if \ \ x_s=Weedle: \ \ \ y'=b_2+w_2\cdot x_{cp}+w_6\cdot(x_{cp})^2 \\
+if \ \ x_s=Pidgey: \ \ \ y'=b_3+w_3\cdot x_{cp}+w_7\cdot(x_{cp})^2 \\
+if \ \ x_s=Eevee: \ \ \ \ y'=b_4+w_4\cdot x_{cp}+w_8\cdot(x_{cp})^2 \\
+y=y'+w_9\cdot x_{hp}+w_{10}\cdot(x_{hp})^2+w_{11}\cdot x_h+w_{12}\cdot (x_h)^2+w_{13}\cdot x_w+w_{14}\cdot (x_w)^2</script><p>算出的 training error=1.9，但是，testing error=102.3！<strong>这么复杂的 model 很大概率会发生overfitting</strong>(按照我的理解，overfitting实际上是我们多使用了一些input的变量或是变量的高次项使曲线跟training data拟合的更好，但不幸的是这些项并不是实际情况下被使用的，于是这个model在testing data上会表现得很糟糕)，overfitting就相当于是那个范围更大的韦恩图，它包含了更多的函数更大的范围，代价就是在准确度上表现得更糟糕</p>
+<h2 id="4-4-正则化解决过拟合-Regularization"><a href="#4-4-正则化解决过拟合-Regularization" class="headerlink" title="4.4 正则化解决过拟合(Regularization)"></a>4.4 正则化解决过拟合(Regularization)</h2><blockquote>
+<p>Regularization 可以使曲线变得更加平滑（smooth），training data 上的 error 变大，但是  testing data 上的 error 变小。有关 Regularization 的具体原理说明详见下一部分</p>
+</blockquote>
+<p>原来的 loss function 只考虑了 prediction 的 error，即 $\sum\limits_i^n(\widehat{y}^i-(b+\sum\limits_{j}w_jx_j))^2$；而 regularization 则是在原来的 loss function 的基础上加上了一项 $\lambda\sum(w_i)^2$，就是把这个 model 里面所有的 $w_i$ 的平方和用 λ 加权(其中 i 代表遍历 n 个training data，j 代表遍历 model 的每一项)</p>
+<p>也就是说，<strong>我们期待参数 $w_i$ 越小甚至接近于 0 的 function，为什么呢？</strong></p>
+<p>因为参数值接近 0 的 function，是比较平滑的；所谓的平滑的意思是，当今天的输入有变化的时候，output 对输入的变化是比较不敏感的</p>
+<p>举例来说，对 $y=b+\sum w_ix_i$ 这个 model，当 input 变化 $\Delta x_i$，output 的变化就是 $w_i\Delta x_i$，也就是说，如果 $w_i$ 越小越接近 0 的话，输出对输入就越不敏感（sensitive），我们的 function 就是一个越平滑的 unction；说到这里你会发现，我们之前没有把bias——b这个参数考虑进去的原因是<strong> bias 的大小跟 function 的平滑程度是没有关系的</strong>， bias 值的大小只是把 function 上下移动而已</p>
+<p><strong>那为什么我们喜欢比较平滑的 function 呢？</strong></p>
+<p>如果我们有一个比较平滑的function，由于输出对输入是不敏感的，测试的时候，一些noises噪声对这个平滑的function的影响就会比较小，而给我们一个比较好的结果</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/regularization.png" alt="regularization" style="width:60%;"></center>
+
+<p><strong>注：这里的λ需要我们手动去调整以取得最好的值</strong></p>
+<p>λ值越大代表考虑smooth的那个regularization那一项的影响力越大，我们找到的function就越平滑</p>
+<p>观察下图可知，当我们的λ越大的时候，在training data上得到的error其实是越大的，但是这件事情是非常合理的，因为当λ越大的时候，我们就越倾向于考虑w的值而越少考虑error的大小；但是有趣的是，虽然在training data上得到的error越大，但是在testing data上得到的error可能会是比较小的</p>
+<p>下图中，当λ从0到100变大的时候，training error不断变大，testing error反而不断变小；但是当λ太大的时候(&gt;100)，在testing data上的error就会越来越大</p>
+<p><strong>我们喜欢比较平滑的function，因为它对noise不那么sensitive；但是我们又不喜欢太平滑的function，因为它就失去了对data拟合的能力；而function的平滑程度，就需要通过调整λ来决定</strong>，就像下图中，当λ=100时，在testing data上的error最小，因此我们选择λ=100</p>
+<p>注：这里的 error 指的是 $\frac{1}{n}\sum\limits_{i=1}^n|\widehat{y}^i-y^i|$</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/regularization-performance.png" alt="regularization-performance" style="width:60%;"></center>
+
+<h1 id="5-conclusion总结"><a href="#5-conclusion总结" class="headerlink" title="5. conclusion总结"></a>5. conclusion总结</h1><h2 id="关于-pokemon-的-cp-值预测的流程："><a href="#关于-pokemon-的-cp-值预测的流程：" class="headerlink" title="关于 pokemon 的 cp 值预测的流程："></a>关于 pokemon 的 cp 值预测的流程：</h2><ul>
+<li><p>根据已有的data特点(labeled data，包含宝可梦及进化后的cp值)，确定使用supervised learning监督学习</p>
+</li>
+<li><p>根据output的特点(输出的是scalar数值)，确定使用regression回归(linear or non-linear)</p>
+</li>
+<li><p>考虑包括进化前cp值、species、hp等各方面变量属性以及高次项的影响，我们的model可以采用这些input的一次项和二次型之和的形式，如：</p>
+<script type="math/tex; mode=display">
+if \ \ x_s=Pidgey: \ \  \ \ y'=b_1+w_1\cdot x_{cp}+w_5\cdot(x_{cp})^2 \\
+if \ \ x_s=Weedle: \ \ \ y'=b_2+w_2\cdot x_{cp}+w_6\cdot(x_{cp})^2 \\
+if \ \ x_s=Pidgey: \ \ \ y'=b_3+w_3\cdot x_{cp}+w_7\cdot(x_{cp})^2 \\
+if \ \ x_s=Eevee: \ \ \ \ y'=b_4+w_4\cdot x_{cp}+w_8\cdot(x_{cp})^2 \\
+y=y'+w_9\cdot x_{hp}+w_{10}\cdot(x_{hp})^2+w_{11}\cdot x_h+w_{12}\cdot (x_h)^2+w_{13}\cdot x_w+w_{14}\cdot (x_w)^2</script></li>
+<li><p>而为了保证function的平滑性，loss function应使用regularization，即$L=\sum\limits_{i=1}^n(\widehat{y}^i-y^i)^2+\lambda\sum\limits_{j}(w_j)^2$，注意bias——参数b对function平滑性无影响，因此不额外再次计入loss function(y的表达式里已包含w、b)</p>
+</li>
+<li><p>利用gradient descent对regularization版本的loss function进行梯度下降迭代处理，每次迭代都减去L对该参数的微分与learning rate之积，假设所有参数合成一个vector：$[w_0,w_1,w_2,…,w_j,…,b]^T$，那么每次梯度下降的表达式如下：</p>
+<script type="math/tex; mode=display">
+梯度:
+\nabla L=
+\begin{bmatrix}
+\frac{\partial L}{\partial w_0} \\
+\frac{\partial L}{\partial w_1} \\
+\frac{\partial L}{\partial w_2} \\
+... \\
+\frac{\partial L}{\partial w_j} \\
+... \\
+\frac{\partial L}{\partial b}
+\end{bmatrix}_{gradient}
+\ \ \ 
+gradient \ descent:
+\begin{bmatrix}
+w'_0\\
+w'_1\\
+w'_2\\
+...\\
+w'_j\\
+...\\
+b'
+\end{bmatrix}_{L=L'}
+= \ \ \ \ \ \ 
+\begin{bmatrix}
+w_0\\
+w_1\\
+w_2\\
+...\\
+w_j\\
+...\\
+b
+\end{bmatrix}_{L=L_0}
+-\ \ \ \ \eta
+\begin{bmatrix}
+\frac{\partial L}{\partial w_0} \\
+\frac{\partial L}{\partial w_1} \\
+\frac{\partial L}{\partial w_2} \\
+... \\
+\frac{\partial L}{\partial w_j} \\
+... \\
+\frac{\partial L}{\partial b}
+\end{bmatrix}_{L=L_0}</script></li>
+<li><p>当梯度稳定不变时，即$\nabla L$为0时，gradient descent便停止，此时如果采用的model是linear的，那么vector必然落于global minima处(凸函数)；如果采用的model是Non-linear的，vector可能会落于local minima处(此时需要采取其他办法获取最佳的function)</p>
+<p>  假定我们已经通过各种方法到达了global minima的地方，此时的vector：$[w_0,w_1,w_2,…,w_j,…,b]^T$所确定的那个唯一的function就是在该λ下的最佳$f^*$，即loss最小</p>
+</li>
+<li><p>这里λ的最佳数值是需要通过我们不断调整来获取的，因此令λ等于0，10，100，1000，…不断使用gradient descent或其他算法得到最佳的parameters：$[w_0,w_1,w_2,…,w_j,…,b]^T$，并计算出这组参数确定的function——$f^*$对training data和testing data上的error值，直到找到那个使testing data的error最小的λ，(这里一开始λ=0，就是没有使用regularization时的loss function)</p>
+<p>  注：引入评价$f^<em>$的error机制，令error=$\frac{1}{n}\sum\limits_{i=1}^n|\widehat{y}^i-y^i|$，分别计算该$f^</em>$对training data和testing data(more important)的$error(f^*)$大小</p>
+<blockquote>
+<p>先设定λ-&gt;确定loss function-&gt;找到使loss最小的$[w_0,w_1,w_2,…,w_j,…,b]^T$-&gt;确定function-&gt;计算error-&gt;重新设定新的λ重复上述步骤-&gt;使testing data上的error最小的λ所对应的$[w_0,w_1,w_2,…,w_j,…,b]^T$所对应的function就是我们能够找到的最佳的function</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="本章总结："><a href="#本章总结：" class="headerlink" title="本章总结："></a>本章总结：</h2><ul>
+<li><p>Pokémon: Original CP and species almost decide the CP after evolution </p>
+</li>
+<li><p>There are probably other hidden factors</p>
+</li>
+<li><p>Gradient descent</p>
+</li>
+<li><p>More theory and tips in the following lectures </p>
+</li>
+<li><p>Overfitting and Regularization</p>
+</li>
+<li><p>We finally get average error = 11.1 on the testing data</p>
+</li>
+<li><p>How about new data? Larger error? Lower error?(larger-&gt;need validation)</p>
+</li>
+<li><p>Next lecture: Where does the error come from?</p>
+<ul>
+<li>More theory about overfitting and regularization</li>
+<li>The concept of validation(用来解决new data的error高于11.1的问题)</li>
+</ul>
+</li>
+</ul>
+<h1 id="附：L1-L2-正则化解决过拟合"><a href="#附：L1-L2-正则化解决过拟合" class="headerlink" title="附：L1 L2 正则化解决过拟合"></a>附：L1 L2 正则化解决过拟合</h1><p>关于overfitting的问题，很大程度上是由于曲线为了更好地拟合training data的数据，而引入了更多的高次项，使得曲线更加“蜿蜒曲折”，反而导致了对testing data的误差更大</p>
+<p>回过头来思考，我们之前衡量model中某个function的好坏所使用的loss function，仅引入了真实值和预测值差值的平方和这一个衡量标准；我们想要避免overfitting过拟合的问题，就要使得高次项对曲线形状的影响尽可能小，因此我们要在loss function里引入高次项(非线性部分)的衡量标准，也就是将高次项的系数也加权放进loss function中，这样可以使得训练出来的model既满足预测值和真实值的误差小，又满足高次项的系数尽可能小而使曲线的形状比较稳定集中</p>
+<p>以下图为例，如果loss function仅考虑了$(\widehat{y}-y)^2$这一误差衡量标准，那么拟合出来的曲线就是红色虚线部分(过拟合)，而过拟合就是所谓的model对training data过度自信, 非常完美的拟合上了这些数据, 如果具备过拟合的能力, 那么这个方程就可能是一个比较复杂的非线性方程 , 正是因为这里的$x^3$和$x^2$使得这条虚线能够被弯来弯去, 所以整个模型就会特别努力地去学习作用在$x^3$和$x^2$上的c、d参数. <strong>但是在这个例子里，我们期望模型要学到的却是这条蓝色的曲线. 因为它能更有效地概括数据</strong>.而且只需要一个$y=a+bx$就能表达出数据的规律. </p>
+<p>或者是说, 蓝色的线最开始时, 和红色线同样也有c、d两个参数, 可是最终学出来时, c 和 d 都学成了0, 虽然蓝色方程的误差要比红色大, 但是概括起数据来还是蓝色好</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/L1L2regularization.png" alt="regularization"></center>
+
+<p>这也是我们通常采用的方法，我们不可能一开始就否定高次项而直接只采用低次线性表达式的model，因为有时候真实数据的确是符合高次项非线性曲线的分布的；而如果一开始直接采用高次非线性表达式的model，就很有可能造成overfitting，在曲线偏折的地方与真实数据的误差非常大。我们的目标应该是这样的：</p>
+<p><strong>在无法确定真实数据分布的情况下，我们尽可能去改变loss function的评价标准</strong></p>
+<ul>
+<li><strong>我们的model的表达式要尽可能的复杂，包含尽可能多的参数和尽可能多的高次非线性项；</strong></li>
+<li><strong>但是我们的loss function又有能力去控制这条曲线的参数和形状，使之不会出现overfitting过拟合的现象；</strong></li>
+<li><strong>在真实数据满足高次非线性曲线分布的时候，loss function控制训练出来的高次项的系数比较大，使得到的曲线比较弯折起伏；</strong></li>
+<li><strong>在真实数据满足低次线性分布的时候，loss function控制训练出来的高次项的系数比较小甚至等于0，使得到的曲线接近linear分布</strong></li>
+</ul>
+<p>那我们如何保证能学出来这样的参数呢? 这就是 L1 L2 正规化出现的原因.</p>
+<p>之前的 loss function 仅考虑了 $(\widehat{y}-y)^2$ 这一误差衡量标准，而<strong>L1 L2正规化</strong>就是在这个loss function的后面多加了一个东西，即model中跟高次项系数有关的表达式；</p>
+<ul>
+<li><p>L1正规化即加上$λ\sum |w_j|$这一项，loss function变成$L=\sum\limits_{i=1}^n(\widehat{y}^i-y^i)^2+\lambda\sum\limits_{j}|w_j|$，即n个training data里的数据的真实值与预测值差值的平方和加上λ权重下的model表达式中所有项系数的绝对值之和</p>
+</li>
+<li><p>L2正规化即加上$\lambda\sum(w_j)^2$这一项，loss function变成$L=\sum\limits_{i=1}^n(\widehat{y}^i-y^i)^2+\lambda\sum\limits_{j}(w_j)^2$，即n个training data里的数据的真实值与预测值差值的平方和加上λ权重下的model表达式中所有项系数的平方和</p>
+</li>
+</ul>
+<p>相对来说，L2要更稳定一些，L1的结果则不那么稳定，如果用p表示正规化程度，上面两式可总结如下：</p>
+<script type="math/tex; mode=display">
+L=\sum\limits_{i=1}^n(\widehat{y}^i-y^i)^2+\lambda\sum\limits_{j}(w_j)^p</script><center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/2-%E5%9B%9E%E5%BD%92%EF%BC%88Regression%EF%BC%89/L1-L2.png" alt="L1-L2"></center>]]></content>
+      <categories>
+        <category>机器学习</category>
+        <category>“有手就行”系列</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>1-什么是机器学习</title>
+    <url>/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<p>机器学习其实只有三个步骤，这三个步骤简化了整个process。可以类比为把大象放进冰箱。我们把大象塞进冰箱需要三个步骤：把门打开；象塞进去；然后把门关起来。机器学习的三个步骤就好比把大象放进冰箱，也只需要三个步骤：</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-20.png" alt="learning map" width="60%;"></center>
+
+<a id="more"></a>
+<h1 id="1-机器学习简介"><a href="#1-机器学习简介" class="headerlink" title="1. 机器学习简介"></a>1. 机器学习简介</h1><p>人工智能是什么呢？人工智能其实一点都不是新的词汇，人工智能（Artificial Intelligence）这个词汇，在19世纪50年代就有了。那这个词意味着什么呢？这个词意味着一个人类长远以来的目标，希望机器可以跟人一样的聪明。在科幻小说里面，我们看要很多这样的幻想和期待。但很长段时间里面，人们并不知道怎么做到人工智能这件事情，直到后来，大概19世纪80年代以后，有了机器学习的方法。那么机器学习顾名思义，从名字就可以被猜出，就是让机器具有学习的能力。所以机器学习跟人工智能之间有什么关系呢？</p>
+<p>人工智能是我们想要达成的目标，而机器学习是想要达成目标的手段，希望机器通过学习方式，他跟人一样聪明。而深度学习和机器学习有什么关系呢？深度学习就是机器学习的其中一种方法。</p>
+<p>在有深度学习、机器学习之前，人们用什么样的方式来做到人工智能这件事呢？我记得高中生物学告诉我们说：生物的行为取决于两件事，一个是后天学习的结果，不是后天学习的结果就是先天的本能。对于机器来说也是一样，他怎么样表现的很有智慧，要么就是通过后天学习的手段表现的很有智慧，要么就是它的先天的本能。机器为什么会有先天的本能，那可能就是他的创造者，其实都是人类，帮它事先设立好的。</p>
+<p>现在先来看一下生物的本能，讲一个跟机器学习一点都没有关系的内容：生物的本能。河狸会筑水坝把水挡起来，但是它怎么知道要筑水坝呢？河狸筑水坝能力是天生的。也就是说，假设河狸他在实验室出生，它没有父母叫他怎么筑水坝。但是他一生下来，它心里就有个冲动，就是它想要筑水坝。那如果我们要程序语言来描述他的话，他那的程序语言就是这样的：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">If</span><br><span class="line">	它听到流水声</span><br><span class="line">Then</span><br><span class="line">	它就筑水坝直到他听不到流水声。</span><br></pre></td></tr></table></figure>
+<p>所以，生物学家就可以欺负河狸，用一个扬声器来播放流水声，如果把扬声器放在水泥墙里面，然后河狸就会在水泥墙上面的放很多的树枝，在水泥墙上面筑堤，想把扬声器的声音盖住。如果你把扬声器放在地上，河狸就会用树枝把他盖住直到你听不见扬声器的声音为止。这就是生物的本能，那机器的本能跟生物的本能其实也很像。</p>
+<p>假设有一天你想要做一个 chat-bot，如果你不是用机器学习的方式，而是给他天生的本能的话，那像是什么样子呢？你可能就会在这个 chat-bot 里面，在这个聊天机器人里面的设定一些规则，这些规则我们通常称 hand-crafted rules，叫做人设定的规则。那假设你今天要设计一个机器人，他可以帮你打开或关掉音乐，那你的做法可能是这样：设立一条规则，就是写程序。如果输入的句子里面看到 <em>turn off</em> 这个词汇，那 chat-bot 要做的事情就是把音乐关掉。这个时候，你之后对 chat-bot 说，<em>Please turn off the music</em> 或 <em>can you turn off the music, Smart?</em> 它就会帮你把音乐关掉。看起来好像很聪明。别人就会觉得果然这就是人工智慧。但是如果你今天想要欺负 chat-bot 的话，你就可以说 <em>please don‘t turn off the music</em>，但是他还是会把音乐关掉。这是个真实的例子，你可以看看你身边有没有这种类似的 chat-bot，然后你去真的对他说这种故意欺负它的话，它其实是会答错的。这是真实的例子，但是不告诉他是哪家公司产品，这家公司也是号称他们做很多 AI 的东西的。</p>
+<p>使用 hand-crafted rules 有什么样的坏处呢，它的坏处就是：使用 hand-crafted rules 你没办法考虑到所有的可能性，它非常的僵化，而用 hand-crafted rules 创造出来的 machine，它永远没有办法超过它的创造者——人类。人类想不到东西，就没办法写规则，没有写规则，机器就不知道要怎么办。所以如果一个机器，它只能够按照人类所设定好的 hand-crafted rules，它整个行为都是被规定好的，没有办法 freestyle。如果是这样的话，它就没有办法超越创造他的人类。</p>
+<p>你可能会说，但是你好像看到很多 chat-bot 看起来非常的聪明。如果你是有一个是一个非常大的企业，他给以派给成千上万的工程师，用血汗的方式来建出数以万计的规则，然后让他的机器看起来好像很聪明。但是对于中小企业来说，这样建规则的方式反而是不利的。所以我认为机器学习发展，对比较小规模企业反而是更有利的。因为接下来，不需要非常大量的人来帮你想各式各样的规则，只要手上有 data，你可以让机器来帮你做这件事情。当然怎么收集 data 又是另外一个问题，这不是我们今天要讨论的主题。</p>
+<p>AI 这个词现在非常非常非常非常的热门，所以会有各式各样、奇奇怪怪的东西，我觉得现在非常经常碰到的一个问题，也许可用以下这个漫画来说明，这是四格漫画，而这个漫画并不是随随便便的一个四格漫画，这个漫画是 facebook 上的漫画。</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-7.png" alt="learning map" width="60%;"></center>
+
+<p>这个漫画想要说的是：现在你一定常常新闻或者是商场上看到这个讯息，有一个seller说看看我们最新的人工智慧机器人，它就是非常的人工智慧。这个系统搭配一个能言善道seller，加上一个非常非常潮的前端和外壳，里面是什么没有人知道。</p>
+<p>外面的观众就问说：他是用什么neural方法做的，反正就是最潮的AI的技术。但是你把他剖来看一看，里面通通都是if掉出来。</p>
+<p>现在政府、企业都说想要推广的AI，可是他们想要推广AI其实是这种AI。那这个其实都不是我们现在应该做的事，如果你要推动，如果你要推广的是这种hand-crafted AI的话，你怎么五十年前不推广，一直到今天才出来做呢？今天我们要走的不是这个路线，如果是这个路线是要被diss的。</p>
+<p>我们要做的其实是让机器他有自己学习的能力，也就我们要做的应该 machine learning 的方向。讲的比较拟人化一点，所谓 machine learning 的方向，就是你就写段程序，然后让机器人变得了很聪明，他就能够有学习的能力。接下来，你就像教一个婴儿、教一个小孩一样的教他，你并不是写程序让他做到这件事，你是写程序让它具有学习的能力。然后接下来，你就可以用像教小孩的方式告诉它。假设你要叫他学会做语音辨识，你就告诉它这段声音是 “Hi”，这段声音就是 “How are you”，这段声音是 “Good bye”。希望接下来它就学会了，你给它一个新的声音，它就可以帮你产生语音辨识的结果。</p>
+<p>如果你希望他学会怎么做影像辨识，你可能不太需要改太多的程序。因为他本身就有这种学习的能力，你只是需要交换下告诉它：看到这张图片，你要说这是猴子；看到这张图片，然后说是猫；看到这张图片，可以说是狗。它具有影像辨识的能力，接下来看到它之前没有看过的猫，希望它可以认识。</p>
+<p>如果讲的更务实一点的话，machine learning 所做的事情，你可以想成就是在寻找一个 function，要让机器具有一个能力，这种能力是根据你提供给他的资料，它去寻找出我们要寻找的 function。还有很多关键问题都可以想成是我们就是需要一个 function。</p>
+<p>在语音辨识这个问题里面，我们要找一个 function，它的输入是声音讯号，他的输出是语音辨识的文字。这个 function 非常非常的复杂，有人会想说我来用一些写规则的方式，读很多语言学文献，然后写一堆规则，然后做语音辨识。这件事情，60年代就有人做，但到现在都还没有做出来。语音辨识太过复杂，这个 function 太过的复杂，不是人类所可以写出来，这是可以想象的。所以我们需要凭借的机器的力量，帮我们把这个 function 找出来。</p>
+<p>假设你要做影像辨识，那就是找一个 function，输入一张图片，然后输出图片里面有什么样的东西。 或者是大家都一直在说的 Alpha GO，如果你要做一个可以下围棋 machine 时，其实你需要的也就是找一个 function。这个 function 的输入是围棋上19 * 19的棋盘。告诉机器在19 * 19的棋盘上，哪些位置有黑子，哪些位置有白子。然后机器就会告诉你，接下来下一步应该落子在哪。或者是你要做一个聊天机器人，那你需要的是一个 function，这个 function 的输入就是使用者的 input，它的输出就是机器的回应。</p>
+<p>以下我先很简短的跟大家说明怎么样找出这个 function，找出 function 的 framework 是什么呢？我们以影像辨识为例，我们找个 function 输入一张图片，它告诉我们这个图片里面有什么样的东西。</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-12.png" alt="learning map" width="60%;"></center>
+
+<p>在做这件事时，你的起手事是你要先准备一个 function set，这个 function 里面有成千上万的 function。举例来说，这个 function 里面有一个f1，你给它看一只猫，它就告诉你输出猫，看一只狗就输出狗。有一个function f2它很怪，你给它看猫，它说是猴子；你给他看狗，它说是蛇。你要准备一个 function set，这个 function set 里面有成千上万的 function。这件事情讲起来可能有点抽象，你可能会怀疑说怎么会有成千上万的 function，我怎么把成千上万的function收集起来，这个内容我们之后会再讲。总之，我们先假设你手上有一个function set，这个function set就叫做model(模型)。</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-13.png" alt="learning map" width="60%;"></center>
+
+<p>有了这个 function set，接下来机器要做的事情是：它有一些训练的资料，这些训练资料告诉机器说一个好的 function，它的输入输出应该长什么样子，有什么样关系。你告诉机器说，现在在这个影像辨识的问题里面，如果看到这个猴子就输出猴子，看到这个猫的图就输出猫，看到这个狗的图，就要输出狗，这样才是对的。有了这些训练资料，你拿出一个 function，机器就可以判断说，这个 function 是好的还是不好的。</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-16.png" alt="learning map" width="60%;"></center>
+
+<p>机器可以根据训练资料判断一个 function 是好的，还是不好的。举例来说：在这个例子里面显然 $f_1$，他比较符合 training data 的叙述，比较符合我们的知识。所以f1看起来是比较好的。$f_2$ 看起来是一个荒谬的 function。我们今天讲的这个 task 叫做 supervised learning 。</p>
+<p>如果你告诉机器 input 和 output 这就叫做 supervised learning，之后我们也会讲到其他不同的学习场景。现在机器有办法决定一个 function 的好坏。但光能够决定一个 function 的好坏是不够的，因为在你的 function set 里面，他有成千上万的 function，它有会无穷无尽的 function，所以我们需要一个有效率的演算法，有效率的演算法可以从 function set 里面挑出最好的 function。一个一个衡量 function 的好坏太花时间，实际上做不到。所以我们需要有一个好的演算法，从 function set 里面挑出一个最好的的 function，这个最好的 function 将它记为 $f^*$。</p>
+<p>找到 $f^*$ 之后，我们希望用它应用到一些场景中，比如：影像辨识，输入一张在机器没有看过的猫，然后希望输出也是猫。你可能会说：机器在学习时没有看到这只猫，那咋样知道在测试时找到的最好 function 可以正确辨识这只猫呢？这就是机器学习里面非常重要的问题：机器有举一反三的能力，这个内容后面再讲。</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-19.png" alt="learning map" width="60%;"></center>
+
+<p>如上图，左边这个部分叫 training，就是学习的过程；右边这个部分叫做 testing，学好以后你就可以拿它做应用。所以machine learning framework 整个过程分成了三个步骤。第一个步骤就是找一个 function，第二个步骤让 machine 可以衡量一个 function 是好还是不好，第三个步骤是让 machine 有一个自动的方法，有一个好演算法可以挑出最好的 function。</p>
+<p>机器学习其实只有三个步骤，这三个步骤简化了整个process。可以类比为把大象放进冰箱。我们把大象塞进冰箱需要三个步骤：把门打开；象塞进去；然后把门关起来。机器学习的三个步骤就好比把大象放进冰箱，也只需要三个步骤：</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/chapter1-20.png" alt="learning map" width="60%;"></center>
+
+
+
+<h1 id="2-机器学习相关技术"><a href="#2-机器学习相关技术" class="headerlink" title="2. 机器学习相关技术"></a>2. 机器学习相关技术</h1><p>下图中，同样的颜色指的是同一个类型的事情</p>
+<p>蓝色方块指的是 scenario，即学习的情境。通常学习的情境是我们没有办法控制的，比如做 reinforcement Learning 是因为我们没有 data，没有办法来做supervised Learning 的情况下才去做的。如果有 data，supervised Learning 当然比 reinforcement Learning 要好；因此手上有什么样的 data，就决定你使用什么样的 scenario</p>
+<p>红色方块指的是 task，即要解决的问题。你要解的问题，随着你要找的 function 的 output 的不同，有输出 scalar 的 regression、有输出 options 的  classification、有输出 structured object 的 structured Learning…</p>
+<p>绿色的方块指的是 model，即用来解决问题的模型（function set）。在这些 task 里面有不同的 model，也就是说，同样的 task，我们可以用不同的方法来解它，比如 linear model、Non-linear model(deep Learning、SVM、decision tree、K-NN…)</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/learning_map.png" alt="learning map" width="60%;"></center>
+
+
+
+<h2 id="2-1-监督学习（Supervised-Learning）"><a href="#2-1-监督学习（Supervised-Learning）" class="headerlink" title="2.1 监督学习（Supervised Learning）"></a>2.1 监督学习（Supervised Learning）</h2><p>supervised learning 需要大量的training data，这些training data告诉我们说，一个我们要找的function，它的input和output之间有什么样的关系</p>
+<p>而这种function的output，通常被叫做label(标签)，也就是说，我们要使用supervised learning这样一种技术，我们需要告诉机器，function的input和output分别是什么，而这种output通常是通过人工的方式标注出来的，因此称为人工标注的label，它的缺点是需要大量的人工effort</p>
+<h3 id="2-1-1-回归（Regression）"><a href="#2-1-1-回归（Regression）" class="headerlink" title="2.1.1 回归（Regression）"></a>2.1.1 回归（Regression）</h3><p>regression是machine learning的一个task，特点是==通过regression找到的function，它的输出是一个scalar数值==</p>
+<p>比如PM2.5的预测，给machine的training data是过去的PM2.5资料，而输出的是对未来PM2.5的预测<strong>数值</strong>，这就是一个典型的regression的问题</p>
+<h3 id="2-1-2-分类（Classification）"><a href="#2-1-2-分类（Classification）" class="headerlink" title="2.1.2 分类（Classification）"></a>2.1.2 分类（Classification）</h3><p>regression和classification的区别是，我们要机器输出的东西的类型是不一样的，在regression里机器输出的是scalar，而classification又分为两类：</p>
+<h4 id="1-二元分类（Binary-Classification）"><a href="#1-二元分类（Binary-Classification）" class="headerlink" title="1) 二元分类（Binary Classification）"></a>1) 二元分类（Binary Classification）</h4><p>在binary classification里，我们要机器输出的是yes or no，是或否</p>
+<p>比如G-mail的spam filtering(垃圾邮件过滤器)，输入是邮件，输出是该邮件是否是垃圾邮件</p>
+<h4 id="2-多元分类（Multi-class-classification）"><a href="#2-多元分类（Multi-class-classification）" class="headerlink" title="2) 多元分类（Multi-class classification）"></a>2) 多元分类（Multi-class classification）</h4><p>在multi-class classification里，机器要做的是选择题，等于给他数个选项，每一个选项就是一个类别，它要从数个类别里面选择正确的类别</p>
+<p>比如document classification(新闻文章分类)，输入是一则新闻，输出是这个新闻属于哪一个类别(选项)</p>
+<h3 id="2-1-3-选择模型"><a href="#2-1-3-选择模型" class="headerlink" title="2.1.3 选择模型"></a>2.1.3 选择模型</h3><p>在解任务的过程中，第一步是要选一个function的set，选不同的function set，会得到不同的结果；而选不同的function set就是选不同的model，model又分为很多种：</p>
+<ul>
+<li><p>Linear Model(线性模型)：最简单的模型</p>
+</li>
+<li><p>Non-linear Model(非线性模型)：最常用的模型，包括：</p>
+<ul>
+<li><p><strong>deep learning</strong></p>
+<p>  如alpha-go下围棋，输入是当前的棋盘格局，输出是下一步要落子的位置；由于棋盘是19*19的，因此可以把它看成是一个有19*19个选项的选择题</p>
+</li>
+<li><p><strong>SVM</strong></p>
+</li>
+<li><p><strong>decision tree</strong></p>
+</li>
+<li><p><strong>K-NN</strong></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-2-半监督学习（Semi-supervised-Learning）"><a href="#2-2-半监督学习（Semi-supervised-Learning）" class="headerlink" title="2.2 半监督学习（Semi-supervised Learning）"></a>2.2 半监督学习（Semi-supervised Learning）</h2><p>举例：如果想要做一个区分猫和狗的function</p>
+<p>手头上有少量的labeled data，它们标注了图片上哪只是猫哪只是狗；同时又有大量的unlabeled data，它们仅仅只有猫和狗的图片，但没有标注去告诉机器哪只是猫哪只是狗</p>
+<p>在Semi-supervised Learning的技术里面，这些没有labeled的data，对机器学习也是有帮助的</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/semi-supervised-Learning.png" alt="semi-supervised" width="60%;"></center>
+
+<h2 id="2-3-迁移学习（Transfer-Learning）"><a href="#2-3-迁移学习（Transfer-Learning）" class="headerlink" title="2.3 迁移学习（Transfer Learning）"></a>2.3 迁移学习（Transfer Learning）</h2><p>假设一样我们要做猫和狗的分类问题</p>
+<p>我们也一样只有少量的有labeled的data；但是我们现在有大量的不相干的data(不是猫和狗的图片，而是一些其他不相干的图片)，在这些大量的data里面，它可能有label也可能没有label</p>
+<p>Transfer Learning要解决的问题是，这一堆不相干的data可以对结果带来什么样的帮助</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/transfer-Learning.png" alt="transfer" width="60%;"></center>
+
+<h2 id="2-4-无监督学习（Unsupervised-Learning）"><a href="#2-4-无监督学习（Unsupervised-Learning）" class="headerlink" title="2.4 无监督学习（Unsupervised Learning）"></a>2.4 无监督学习（Unsupervised Learning）</h2><p>区别于supervised learning，unsupervised learning希望机器学到无师自通，在完全没有任何label的情况下，机器到底能学到什么样的知识</p>
+<p>举例来说，如果我们给机器看大量的文章，机器看过大量的文章之后，它到底能够学到什么事情？它能不能学会每个词汇的意思？</p>
+<p>学会每个词汇的意思可以理解为：我们要找一个function，然后把一个词汇丢进去，机器要输出告诉你说这个词汇是什么意思，也许他用一个向量来表示这个词汇的不同的特性，不同的attribute</p>
+<p>又比如，我们带机器去逛动物园，给他看大量的动物的图片，对于unsupervised learning来说，我们的data中只有给function的输入的大量图片，没有任何的输出标注；在这种情况下，机器该怎么学会根据testing data的输入来自己生成新的图片？</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/unsupervised-Learning.png" width="60%;"></center>
+
+<h2 id="2-5-结构化学习（Structured-Learning）"><a href="#2-5-结构化学习（Structured-Learning）" class="headerlink" title="2.5 结构化学习（Structured Learning）"></a>2.5 结构化学习（Structured Learning）</h2><p>在structured Learning里，我们要机器输出的是，一个有结构性的东西</p>
+<p>在分类的问题中，机器输出的只是一个选项；在structured类的problem里面，机器要输出的是一个复杂的物件</p>
+<p>举例来说，在语音识别的情境下，机器的输入是一个声音信号，输出是一个句子；句子是由许多词汇拼凑而成，它是一个有结构性的object</p>
+<p>或者说机器翻译、人脸识别(标出不同的人的名称)</p>
+<p>比如<strong>GAN</strong>也是structured Learning的一种方法</p>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/structured-Learning.png" alt="structured" width="60%;"></center>
+
+
+
+<h2 id="2-6-强化学习（Reinforcement-Learning）"><a href="#2-6-强化学习（Reinforcement-Learning）" class="headerlink" title="2.6 强化学习（Reinforcement Learning）"></a>2.6 强化学习（Reinforcement Learning）</h2><p><strong>Supervised Learning</strong>：我们会告诉机器正确的答案是什么 ，其特点是<strong>Learning from teacher</strong></p>
+<ul>
+<li>比如训练一个聊天机器人，告诉他如果使用者说了“Hello”，你就说“Hi”；如果使用者说了“Bye bye”，你就说“Good bye”；就好像有一个家教在它的旁边手把手地教他每一件事情</li>
+</ul>
+<p><strong>Reinforcement Learning</strong>：我们没有告诉机器正确的答案是什么，机器最终得到的只有一个分数，就是它做的好还是不好，但他不知道自己到底哪里做的不好，他也没有正确的答案；很像真实社会中的学习，你没有一个正确的答案，你只知道自己是做得好还是不好。其特点是<strong>Learning from critics</strong></p>
+<ul>
+<li>比如训练一个聊天机器人，让它跟客人直接对话；如果客人勃然大怒把电话挂掉了，那机器就学到一件事情，刚才做错了，它不知道自己哪里做错了，必须自己回去反省检讨到底要如何改进，比如一开始不应该打招呼吗？还是中间不能骂脏话之类的</li>
+</ul>
+<center><img src="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E2%80%9C%E6%9C%89%E6%89%8B%E5%B0%B1%E8%A1%8C%E2%80%9D%E7%B3%BB%E5%88%97/1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/reinforcement-Learning.png" alt="reinforcement" width="60%;"></center>
+
+<p>再拿下棋这件事举例，supervised Learning是说看到眼前这个棋盘，告诉机器下一步要走什么位置；而reinforcement Learning是说让机器和对手互弈，下了好几手之后赢了，机器就知道这一局棋下的不错，但是到底哪一步是赢的关键，机器是不知道的，他只知道自己是赢了还是输了</p>
+<p>其实Alpha Go是用supervised Learning+reinforcement Learning的方式去学习的，机器先是从棋谱学习，有棋谱就可以做supervised的学习；之后再做reinforcement Learning，机器的对手是另外一台机器，Alpha Go就是和自己下棋，然后不断的进步。</p>
+]]></content>
+      <categories>
+        <category>机器学习</category>
+        <category>“有手就行”系列</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
+      </tags>
+  </entry>
+</search>
